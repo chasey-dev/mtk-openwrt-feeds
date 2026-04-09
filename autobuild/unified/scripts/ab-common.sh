@@ -177,7 +177,7 @@ copy_file() {
 
 		[ -n "${2}" ] && dest="${openwrt_root}/${2}"
 		[ -d "${dest}" ] || exec_log "mkdir -p \"${dest}\""
-		exec_log "cp -af \"${1}\" \"${dest}\""
+		exec_log "cp -afL \"${1}\" \"${dest}\""
 	fi
 }
 
@@ -192,7 +192,7 @@ copy_files() {
 
 		[ -n "${2}" ] && dest="${openwrt_root}/${2}"
 		[ -d "${dest}" ] || exec_log "mkdir -p \"${dest}\""
-		exec_log "cp -af \"${1}\"/* \"${dest}/\""
+		exec_log "cp -afL \"${1}\"/* \"${dest}/\""
 	fi
 }
 
@@ -204,7 +204,7 @@ copy_files() {
 copy_files_prepare() {
 	local tmpdir=$(mktemp -d -p "${ab_tmp}")
 
-	[ -d "${1}" ] && exec_log "cp -af \"${1}/*\" \"${tmpdir}/\""
+	[ -d "${1}" ] && exec_log "cp -afL \"${1}/*\" \"${tmpdir}/\""
 
 	echo "${tmpdir}"
 }
