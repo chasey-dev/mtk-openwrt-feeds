@@ -250,6 +250,12 @@ enum atenl_phy_type {
 	ATENL_PHY_TYPE_EHT_MU,
 };
 
+enum atenl_flash_type {
+	FLASH_TYPE_MTD,
+	FLASH_TYPE_EMMC,
+	FLASH_TYPE_UBI,
+};
+
 enum atenl_e2p_mode {
 	E2P_EFUSE_MODE = 1,
 	E2P_FLASH_MODE,
@@ -514,7 +520,6 @@ void atenl_get_ibf_cal_result(struct atenl *an);
 void atenl_get_rx_gain_cal_result(struct atenl *an);
 int atenl_eeprom_init(struct atenl *an, u8 phy_idx);
 void atenl_eeprom_close(struct atenl *an);
-int atenl_eeprom_write_flash(struct atenl *an);
 int atenl_eeprom_update_precal(struct atenl *an, int write_offs, int size);
 int atenl_eeprom_read_from_driver(struct atenl *an, u32 offset, int len);
 void atenl_eeprom_cmd_handler(struct atenl *an, u8 phy_idx, char *cmd);
