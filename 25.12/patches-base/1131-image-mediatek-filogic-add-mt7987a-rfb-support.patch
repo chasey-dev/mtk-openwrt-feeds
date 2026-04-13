@@ -1,6 +1,6 @@
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -1754,26 +1754,27 @@ TARGET_DEVICES += mediatek_mt7986b-rfb
+@@ -2012,26 +2012,27 @@ TARGET_DEVICES += mediatek_mt7986b-rfb
  
  define Device/mediatek_mt7987a-rfb
    DEVICE_VENDOR := MediaTek
@@ -44,7 +44,7 @@
    KERNEL_LOADADDR := 0x40000000
    KERNEL := kernel-bin | gzip
    KERNEL_INITRAMFS := kernel-bin | lzma | \
-@@ -1784,22 +1785,6 @@ define Device/mediatek_mt7987a-rfb
+@@ -2042,22 +2043,6 @@ define Device/mediatek_mt7987a-rfb
    IMAGE_SIZE := $$(shell expr 64 + $$(CONFIG_TARGET_ROOTFS_PARTSIZE))m
    IMAGES := sysupgrade.itb
    IMAGE/sysupgrade.itb := append-kernel | fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-with-rootfs | pad-rootfs | append-metadata

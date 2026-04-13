@@ -1,7 +1,7 @@
 --- a/target/linux/mediatek/image/Makefile
 +++ b/target/linux/mediatek/image/Makefile
-@@ -66,6 +66,26 @@ define Build/squashfs-hashed
- 		$(KDIR)/image-$(firstword $(DEVICE_DTS)).dtb $(KDIR)/image-$(firstword $(DEVICE_DTS)).dtb
+@@ -78,6 +78,26 @@ define Build/prepare-dm-verity
+ 	$(call Build/fdt-patch-dm-verity)
  endef
  
 +define hkdf
@@ -25,8 +25,8 @@
 +endef
 +
  define Build/change-rootdev-to-ramdisk
- 	$(STAGING_DIR_HOSTPKG)/bin/fdtget -t s \
- 		$(KDIR)/image-$(firstword $(DEVICE_DTS)).dtb /chosen bootargs | \
+ 	$(TOPDIR)/scripts/fdt-patch-rootdev.sh $(STAGING_DIR_HOSTPKG) \
+ 		$(KDIR)/image-$(firstword $(DEVICE_DTS)).dtb bootargs /dev/ram 1
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
 @@ -6,6 +6,7 @@ define Image/Prepare
@@ -36,4 +36,4 @@
 +	$(if $(CONFIG_MTK_FW_ENC),$(call Image/fw-enc-key-derive))
  endef
  
- define Build/mt7981-bl2
+ define Build/fit-with-netgear-top-level-rootfs-node

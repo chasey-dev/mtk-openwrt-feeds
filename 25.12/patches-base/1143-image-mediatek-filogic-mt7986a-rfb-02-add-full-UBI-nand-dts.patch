@@ -85,7 +85,7 @@
 +};
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -1827,6 +1827,7 @@ define Device/mediatek_mt7986a-rfb
+@@ -1940,6 +1940,7 @@ define Device/mediatek_mt7986a-rfb
    DEVICE_MODEL := MT7986A rfb (DT-overlay)
    DEVICE_DTS := mt7986a-rfb
    DEVICE_DTS_OVERLAY:= \
@@ -93,7 +93,7 @@
  	mt7986-spim-nand-nmbm
    DEVICE_DTS_DIR := $(DTS_DIR)/
    DEVICE_DTC_FLAGS := --pad 4096
-@@ -1850,6 +1851,7 @@ define Device/mediatek_mt7986b-rfb
+@@ -1963,6 +1964,7 @@ define Device/mediatek_mt7986b-rfb
    DEVICE_MODEL := MT7986B rfb (DT-overlay)
    DEVICE_DTS := mt7986b-rfb
    DEVICE_DTS_OVERLAY:= \

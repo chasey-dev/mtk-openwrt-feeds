@@ -1,6 +1,6 @@
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -1852,7 +1852,7 @@ define Device/mediatek_mt7981-rfb
+@@ -1923,7 +1923,7 @@ define Device/mediatek_mt7981-rfb
    DEVICE_DTS_DIR := $(DTS_DIR)/
    DEVICE_DTC_FLAGS := --pad 4096
    DEVICE_DTS_LOADADDR := 0x43f00000

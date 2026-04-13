@@ -1,6 +1,6 @@
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -1902,10 +1902,12 @@ define Device/mediatek_mt7988a-rfb
+@@ -2029,10 +2029,12 @@ define Device/mediatek_mt7988a-rfb
  	mt7988a-rfb-eth1-i2p5g-phy \
  	mt7988a-rfb-eth1-mxl \
  	mt7988a-rfb-eth1-sfp \

@@ -1,8 +1,6 @@
-diff --git a/target/linux/mediatek/image/filogic.mk b/target/linux/mediatek/image/filogic.mk
-index ae5e085..06d85cf 100644
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -1846,6 +1846,7 @@ define Device/mediatek_mt7981-rfb
+@@ -1918,6 +1918,7 @@ define Device/mediatek_mt7981-rfb
  	mt7981-rfb-spim-nor \
  	mt7981-rfb-spim-nand \
  	mt7981-rfb-spim-nand-nmbm \

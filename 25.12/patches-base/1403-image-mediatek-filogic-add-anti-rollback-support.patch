@@ -27,4 +27,4 @@
 +	$(if $(CONFIG_MTK_ANTI_ROLLBACK),$(call Image/gen-fw-ar-ver))
  endef
  
- define Build/mt7981-bl2
+ define Build/fit-with-netgear-top-level-rootfs-node

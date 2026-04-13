@@ -1,6 +1,6 @@
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -724,15 +724,21 @@ define Device/bananapi_bpi-r4-lite
+@@ -726,15 +726,21 @@ define Device/bananapi_bpi-r4-lite
    DEVICE_VENDOR := Bananapi
    DEVICE_MODEL := BPi-R4 Lite
    DEVICE_DTS := mt7987a-bananapi-bpi-r4-lite
@@ -27,7 +27,7 @@
    BLOCKSIZE := 128k
    PAGESIZE := 2048
    KERNEL_IN_UBI := 1
-@@ -746,34 +752,6 @@ define Device/bananapi_bpi-r4-lite
+@@ -748,34 +754,6 @@ define Device/bananapi_bpi-r4-lite
    KERNEL_IN_UBI := 1
    IMAGES := sysupgrade.itb
    IMAGE/sysupgrade.itb := append-kernel | fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-with-rootfs | pad-rootfs | append-metadata

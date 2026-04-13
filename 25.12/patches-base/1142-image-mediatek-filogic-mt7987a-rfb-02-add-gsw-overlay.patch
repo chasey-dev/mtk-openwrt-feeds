@@ -7,7 +7,7 @@ Change-Id: I81a639c05b9fae80c98e5a1fda6e141eb43b2949
 
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -1634,8 +1634,10 @@ define Device/mediatek_mt7987a-rfb
+@@ -1986,8 +1986,10 @@ define Device/mediatek_mt7987a-rfb
  	mt7987-sd \
  	mt7987-netsys-eth0-an8801sb \
  	mt7987-netsys-eth0-an8855 \

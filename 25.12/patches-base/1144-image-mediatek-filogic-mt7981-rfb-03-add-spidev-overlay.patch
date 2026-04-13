@@ -1,6 +1,6 @@
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -1846,7 +1846,8 @@ define Device/mediatek_mt7981-rfb
+@@ -1917,7 +1917,8 @@ define Device/mediatek_mt7981-rfb
  	mt7981-rfb-spim-nor \
  	mt7981-rfb-spim-nand-nmbm \
  	mt7981-rfb-mxl-2p5g-phy-eth1 \

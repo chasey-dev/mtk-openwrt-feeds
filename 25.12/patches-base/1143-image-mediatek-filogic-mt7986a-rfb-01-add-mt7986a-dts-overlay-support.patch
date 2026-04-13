@@ -1,6 +1,6 @@
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -1583,43 +1583,49 @@ define Device/mediatek_mt7981-rfb
+@@ -1935,43 +1935,49 @@ define Device/mediatek_mt7981-rfb
  endef
  TARGET_DEVICES += mediatek_mt7981-rfb
  

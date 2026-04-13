@@ -7,7 +7,7 @@ Signed-off-by: Weijie Gao <weijie.gao@mediatek.com>
 
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -541,9 +541,6 @@ define Device/bananapi_bpi-r3
+@@ -588,9 +588,6 @@ define Device/bananapi_bpi-r3
    ARTIFACT/sdcard.img.gz	:= mt798x-gpt sdmmc |\
  				   pad-to 17k | mt7986-bl2 sdmmc-ddr4 |\
  				   pad-to 6656k | mt7986-bl31-uboot bananapi_bpi-r3-sdmmc |\

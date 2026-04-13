@@ -1,6 +1,6 @@
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -1790,6 +1790,7 @@ define Device/mediatek_mt7987a-rfb
+@@ -1986,6 +1986,7 @@ define Device/mediatek_mt7987a-rfb
  	mt7987-emmc \
  	mt7987-sd \
  	mt7987-netsys-eth0-an8801sb \
