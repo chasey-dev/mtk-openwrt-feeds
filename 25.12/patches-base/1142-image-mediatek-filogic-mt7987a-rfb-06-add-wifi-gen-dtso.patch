@@ -1,0 +1,14 @@
+--- a/target/linux/mediatek/image/filogic.mk
++++ b/target/linux/mediatek/image/filogic.mk
+@@ -1997,7 +1997,10 @@ define Device/mediatek_mt7987a-rfb
+ 	mt7987-netsys-eth2-e2p5g \
+ 	mt7987-netsys-eth2-sfp \
+ 	mt7987-netsys-eth2-usb \
+-	mt7987-spidev
++	mt7987-spidev \
++	filogic-wifi7 \
++	filogic-wifi8 \
++	filogic-binfile
+   DEVICE_DTS_DIR := $(DTS_DIR)/
+   DEVICE_DTC_FLAGS := --pad 4096
+   DEVICE_DTS_LOADADDR := 0x4ff00000

@@ -17,7 +17,10 @@ define Device/mediatek_mt7988d-rfb
 	mt7988d-rfb-eth2-an8831x \
 	mt7988d-rfb-eth2-sfp \
 	mt7988d-rfb-eth0-gsw \
-	mt7988d-rfb-2pcie
+	mt7988d-rfb-2pcie \
+	filogic-wifi7 \
+	filogic-wifi8 \
+	filogic-binfile
   DEVICE_DTS_DIR := $(DTS_DIR)/
   DEVICE_DTC_FLAGS := --pad 4096
   DEVICE_DTS_LOADADDR := 0x45f00000

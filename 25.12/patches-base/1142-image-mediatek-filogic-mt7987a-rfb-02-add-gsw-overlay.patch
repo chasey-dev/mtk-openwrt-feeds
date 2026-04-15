@@ -11,10 +11,10 @@ Change-Id: I81a639c05b9fae80c98e5a1fda6e141eb43b2949
  	mt7987-sd \
  	mt7987-netsys-eth0-an8801sb \
  	mt7987-netsys-eth0-an8855 \
-+  mt7987-netsys-eth0-an8855-gsw \
++	mt7987-netsys-eth0-an8855-gsw \
  	mt7987-netsys-eth0-e2p5g \
  	mt7987-netsys-eth0-mt7531 \
-+  mt7987-netsys-eth0-mt7531-gsw \
++	mt7987-netsys-eth0-mt7531-gsw \
  	mt7987-netsys-eth1-i2p5g \
  	mt7987-netsys-eth2-an8801sb \
  	mt7987-netsys-eth2-e2p5g \
