@@ -642,7 +642,7 @@ atenl_ubi_write_handler(int fd, off_t vol_size, u32 offs,
 			goto fail;
 
 		ret = read(fd, tmp, vol_size);
-		if (ret < 0)
+		if (ret != (int)vol_size)
 			goto fail;
 
 		memcpy(tmp + offs, *buf, size);
