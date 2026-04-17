@@ -722,6 +722,7 @@ function convert_ibf {
             local bw=$(echo ${new_param:6:2} | sed 's/^0//')
             local tx_rate_nss=${new_param:9:2}
             local tx_stream=${new_param:12:2}
+            local tx_antenna=$((2 ** tx_stream - 1))
             local tx_power=${new_param:15:2}
             local channel=$(echo ${new_param:18:3} | sed 's/^0//')
             local channel2=${new_param:22:3}
@@ -734,7 +735,7 @@ function convert_ibf {
             record_config "ATETXBW" ${bw} ${iwpriv_file}
             convert_channel "${channel}:${band}"
             new_param="1"
-            do_cmd "mt76-test phy${phy_idx} set tx_rate_mode=${tx_rate_mode} tx_rate_idx=${tx_rate_idx} tx_rate_nss=${tx_rate_nss} tx_rate_sgi=0 tx_rate_ldpc=1 tx_power=${tx_power},0,0,0 tx_count=10000000 tx_length=${tx_length} tx_ipg=4"
+            do_cmd "mt76-test phy${phy_idx} set tx_rate_mode=${tx_rate_mode} tx_rate_idx=${tx_rate_idx} tx_rate_nss=${tx_rate_nss} tx_rate_sgi=0 tx_rate_ldpc=1 tx_power=${tx_power},0,0,0 tx_count=10000000 tx_length=${tx_length} tx_ipg=4 tx_antenna=${tx_antenna}"
             ;;
         *)
     esac
