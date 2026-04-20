@@ -202,7 +202,7 @@ Subject: [PATCH] net: ethernet: mtk_ppe: add 464xlat clat support
  };
  
  #define MTK_FOE_IB2_QID			GENMASK(3, 0)
-@@ -185,16 +187,20 @@ struct mtk_foe_ipv4 {
+@@ -191,16 +193,20 @@ struct mtk_foe_ipv4 {
  	struct mtk_foe_mac_info l2;
  };
  
@@ -226,7 +226,7 @@ Subject: [PATCH] net: ethernet: mtk_ppe: add 464xlat clat support
  
  	u32 ib2;
  
-@@ -337,6 +343,17 @@ struct mtk_foe_accounting {
+@@ -343,6 +349,17 @@ struct mtk_foe_accounting {
  	u64	packets;
  };
  
@@ -244,10 +244,10 @@ Subject: [PATCH] net: ethernet: mtk_ppe: add 464xlat clat support
  struct mtk_ppe {
  	struct mtk_eth *eth;
  	struct device *dev;
-@@ -436,5 +453,6 @@ int mtk_flow_entry_match_len(struct mtk_
+@@ -442,5 +459,6 @@ int mtk_flow_entry_match_len(struct mtk_
  bool mtk_flow_entry_match(struct mtk_eth *eth, struct mtk_flow_entry *entry,
  			  struct mtk_foe_entry *data, int len);
- void mtk_flow_offload_teardown_by_crypto(struct mtk_eth *eth, int id);
+ void mtk_flow_offload_teardown_by_tnl(struct mtk_eth *eth, u32 mode, int id);
 +u32 ppe_m32(struct mtk_ppe *ppe, u32 reg, u32 mask, u32 set);
  
  #endif

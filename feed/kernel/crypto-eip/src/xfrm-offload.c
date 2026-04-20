@@ -16,7 +16,9 @@
 #if IS_ENABLED(CONFIG_NET_MEDIATEK_HNAT)
 #include <mtk_hnat/hnat.h>
 #include <mtk_hnat/nf_hnat_mtk.h>
-#endif // HNAT
+#elif defined(CONFIG_CRYPTO_OFFLOAD_INLINE_FLOWBLOCK)
+#include <mtk_ppe.h>
+#endif
 
 #include <pce/cdrt.h>
 #include <pce/cls.h>
@@ -407,7 +409,8 @@ void mtk_xfrm_offload_policy_delete(struct xfrm_policy *xp)
 #if IS_ENABLED(CONFIG_NET_MEDIATEK_HNAT)
 		foe_clear_crypto_entry(xfrm_params->cdrt->idx);
 #elif defined(CONFIG_CRYPTO_OFFLOAD_INLINE_FLOWBLOCK)
-		mtk_flow_offload_teardown_by_crypto(mcrypto.eth, xfrm_params->cdrt->idx);
+		mtk_flow_offload_teardown_by_tnl(mcrypto.eth, xfrm_params->cdrt->idx,
+						 MTK_FOE_CRYPTO_DEL);
 #endif
 
 	return;
