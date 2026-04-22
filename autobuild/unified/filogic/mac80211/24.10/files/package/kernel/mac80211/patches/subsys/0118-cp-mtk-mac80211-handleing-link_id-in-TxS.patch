@@ -1,0 +1,115 @@
+From 72ee9dffdf2dd17c9e431e088d6afb77996e8af5 Mon Sep 17 00:00:00 2001
+From: Michael-CY Lee <michael-cy.lee@mediatek.com>
+Date: Thu, 26 Feb 2026 11:07:48 +0800
+Subject: [PATCH] mtk: mac80211: handleing link_id in TxS
+
+issue severity: High
+Signed-off-by: Michael-CY Lee <michael-cy.lee@mediatek.com>
+---
+ include/net/cfg80211.h | 5 ++++-
+ include/net/mac80211.h | 3 ++-
+ net/mac80211/status.c  | 4 ++++
+ net/wireless/nl80211.c | 7 +++++--
+ 4 files changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
+index 16b1ffad..bc8c868e 100644
+--- a/include/net/cfg80211.h
++++ b/include/net/cfg80211.h
+@@ -8861,6 +8861,7 @@ static inline bool cfg80211_rx_mgmt(struct wireless_dev *wdev, int freq,
+  * @buf: Management frame (header + body)
+  * @len: length of the frame data
+  * @ack: Whether frame was acknowledged
++ * @link_id: On which link the frame was transmitted. -1 for invalid.
+  */
+ struct cfg80211_tx_status {
+ 	u64 cookie;
+@@ -8869,6 +8870,7 @@ struct cfg80211_tx_status {
+ 	const u8 *buf;
+ 	size_t len;
+ 	bool ack;
++	int link_id;
+ };
+ 
+ /**
+@@ -8905,7 +8907,8 @@ static inline void cfg80211_mgmt_tx_status(struct wireless_dev *wdev,
+ 		.cookie = cookie,
+ 		.buf = buf,
+ 		.len = len,
+-		.ack = ack
++		.ack = ack,
++		.link_id = -1
+ 	};
+ 
+ 	cfg80211_mgmt_tx_status_ext(wdev, &status, gfp);
+diff --git a/include/net/mac80211.h b/include/net/mac80211.h
+index 8dca5194..358aa6b5 100644
+--- a/include/net/mac80211.h
++++ b/include/net/mac80211.h
+@@ -1065,6 +1065,7 @@ enum mac80211_tx_control_flags {
+  */
+ enum mac80211_tx_status_flags {
+ 	IEEE80211_TX_STATUS_ACK_SIGNAL_VALID = BIT(0),
++	IEEE80211_TX_STATUS_LINK_ID_VALID = BIT(1),
+ };
+ 
+ /*
+@@ -1291,7 +1292,7 @@ struct ieee80211_tx_info {
+ 			u8 ampdu_ack_len;
+ 			u8 ampdu_len;
+ 			u8 antenna;
+-			u8 pad;
++			u8 link_id;
+ 			u16 tx_time;
+ 			u8 flags;
+ 			u8 pad2;
+diff --git a/net/mac80211/status.c b/net/mac80211/status.c
+index 582d10a2..c3f16c18 100644
+--- a/net/mac80211/status.c
++++ b/net/mac80211/status.c
+@@ -615,6 +615,7 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
+ 			.buf = skb->data,
+ 			.len = skb->len,
+ 			.ack = acked,
++			.link_id = -1,
+ 		};
+ 
+ 		if (ieee80211_is_timing_measurement(orig_skb) ||
+@@ -624,6 +625,9 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
+ 			status.ack_tstamp = ktime_to_ns(ack_hwtstamp);
+ 		}
+ 
++		if (info->status.flags & IEEE80211_TX_STATUS_LINK_ID_VALID)
++			status.link_id = info->status.link_id;
++
+ 		rcu_read_lock();
+ 		sdata = ieee80211_sdata_from_skb(local, skb);
+ 		if (sdata) {
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 1dbe31d0..cbee6937 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -20141,7 +20141,9 @@ static void nl80211_frame_tx_status(struct wireless_dev *wdev,
+ 			       status->tx_tstamp, NL80211_ATTR_PAD)) ||
+ 	    (status->ack_tstamp &&
+ 	     nla_put_u64_64bit(msg, NL80211_ATTR_RX_HW_TIMESTAMP,
+-			       status->ack_tstamp, NL80211_ATTR_PAD)))
++			       status->ack_tstamp, NL80211_ATTR_PAD)) ||
++	    (status->link_id >= 0 && status->link_id < IEEE80211_MLD_MAX_NUM_LINKS &&
++	     nla_put_u8(msg, NL80211_ATTR_MLO_LINK_ID, status->link_id)))
+ 		goto nla_put_failure;
+ 
+ 	genlmsg_end(msg, hdr);
+@@ -20162,7 +20164,8 @@ void cfg80211_control_port_tx_status(struct wireless_dev *wdev, u64 cookie,
+ 		.cookie = cookie,
+ 		.buf = buf,
+ 		.len = len,
+-		.ack = ack
++		.ack = ack,
++		.link_id = -1
+ 	};
+ 
+ 	nl80211_frame_tx_status(wdev, &status, gfp,
+-- 
+2.45.2
+
