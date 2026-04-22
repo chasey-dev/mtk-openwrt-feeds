@@ -1,0 +1,36 @@
+From adf1e941ab21afc11981065c6cb04f0360d72c67 Mon Sep 17 00:00:00 2001
+From: Michael-CY Lee <michael-cy.lee@mediatek.com>
+Date: Wed, 31 Dec 2025 16:43:50 +0800
+Subject: [PATCH] mtk: mt76: remove unnecessary wcid asignment
+
+Without this patch, the wcid might incorrectly be changed after TX,
+causing wcid->non_aql_packets being counted on wrong wcid.
+
+For example, on AP side, if the STA's setup link is 5G link, and the STA
+uses 2G to TX frame. The value of non_aql_packets is increased on 5G
+wcid, but decreased on 2G wcid.
+
+issue severity: High
+Signed-off-by: Michael-CY Lee <michael-cy.lee@mediatek.com>
+---
+ tx.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/tx.c b/tx.c
+index 5fd81f793..195e0e328 100644
+--- a/tx.c
++++ b/tx.c
+@@ -311,10 +311,6 @@ __mt76_tx_queue_skb(struct mt76_phy *phy, int qid, struct sk_buff *skb,
+ 	if (idx < 0 || !sta)
+ 		return idx;
+ 
+-	wcid = (struct mt76_wcid *)sta->drv_priv;
+-	if (!wcid->sta)
+-		return idx;
+-
+ 	q->entry[idx].wcid = wcid->idx;
+ 
+ 	if (!non_aql)
+-- 
+2.45.2
+
