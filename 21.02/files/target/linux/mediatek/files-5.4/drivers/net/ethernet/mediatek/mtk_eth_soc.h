@@ -337,6 +337,8 @@
 #define MTK_CTRL_DW0_SDL_OFFSET		(3)
 #define MTK_CTRL_DW0_SDL_MASK		BITS(3, 18)
 
+#define MTK_LRO_VLAN_EN			(0xf << 8)
+#define MTK_LRO_VLAN_VID_CMP_DEPTH	(0x3 << 12)
 #define MTK_ADMA_MODE			BIT(15)
 #define MTK_LRO_MIN_RXD_SDL		(MTK_HW_LRO_SDL_REMAIN_ROOM << 16)
 
