@@ -1,24 +1,19 @@
 # Script for dual image A/B system boots
-# Copyright (C) 2024 MediaTek Inc.
+# Copyright (C) 2026 MediaTek Inc.
 # Author: Weijie Gao <weijie.gao@mediatek.com>
 
-ubi_prepare_u_boot_env() {
-	local ubidev="$1"
+ubi_prepare_bspconf() {
+	local ubidev="${1}"
+	local bspconf_size=0x1f000
 
-	local env_size=$(cat /sys/firmware/devicetree/base/mediatek,env-size 2>/dev/null)
-	[ -z "${env_size}" ] && return
+	local vol_name=$(cat /sys/firmware/devicetree/base/mediatek,bspconf-part-vol 2>/dev/null)
+	[ -z "${vol_name}" ] && return
 
-	local env_vol=$(cat /sys/firmware/devicetree/base/mediatek,env-ubi-volume 2>/dev/null)
-	if [ -n "${env_vol}" ]; then
-		local env_ubivol="$( nand_find_volume $ubidev $env_vol )"
-		[ -z "$env_ubivol" ] && ubimkvol /dev/$ubidev -N ${env_vol} -s ${env_size} 2>/dev/null || :
-	fi
+	local ubivol1="$( nand_find_volume ${ubidev} ${vol_name}1 )"
+	[ -z "${ubivol1}" ] && ubimkvol /dev/${ubidev} -N ${vol_name}1 -s ${bspconf_size} -t static 2>/dev/null || :
 
-	local env2_vol=$(cat /sys/firmware/devicetree/base/mediatek,env-ubi-volume-redund 2>/dev/null)
-	if [ -n "${env2_vol}" ]; then
-		local env2_ubivol="$( nand_find_volume $ubidev $env2_vol )"
-		[ -z "$env2_ubivol" ] && ubimkvol /dev/$ubidev -N ${env2_vol} -s ${env_size} 2>/dev/null || :
-	fi
+	local ubivol2="$( nand_find_volume ${ubidev} ${vol_name}2 )"
+	[ -z "${ubivol2}" ] && ubimkvol /dev/${ubidev} -N ${vol_name}2 -s ${bspconf_size} -t static 2>/dev/null || :
 }
 
 ubi_dual_boot_restore_config() {
@@ -98,8 +93,8 @@ dual_boot_upgrade_prepare_ubi() {
 		return 1;
 	fi
 
-	# create u-boot environment volume
-	ubi_prepare_u_boot_env $ubidev
+	# create bspconf volumes
+	ubi_prepare_bspconf $ubidev
 
 	if [ x"${reserve_rootfs_data}" = xY ]; then
 		# Do not touch rootfs_data
@@ -155,11 +150,7 @@ ubi_dual_boot_upgrade_itb() {
 	local upgrade_image_slot=$(cat /sys/firmware/devicetree/base/mediatek,upgrade-image-slot 2>/dev/null)
 	if [ -n "${upgrade_image_slot}" ]; then
 		v "Set new boot image slot to ${upgrade_image_slot}"
-		# Force the creation of fw_printenv.lock
-		mkdir -p /var/lock
-		touch /var/lock/fw_printenv.lock
-		fw_setenv "dual_boot.current_slot" "${upgrade_image_slot}"
-		fw_setenv "dual_boot.slot_${upgrade_image_slot}_invalid" "0"
+		bspconf upd image ${upgrade_image_slot} "${fit_file}"
 	fi
 
 	if [ x"${reserve_rootfs_data}" != xY ]; then
@@ -187,9 +178,6 @@ nand_upgrade_itb() {
 	local fit_ubidev="$(nand_find_ubi "$CI_UBIPART")"
 	local fit_ubivol="$(nand_find_volume $fit_ubidev "$CI_KERNPART")"
 	${gz}cat "$fit_file" | ubiupdatevol /dev/$fit_ubivol -s "$fit_length" -
-
-	# create u-boot environment volume
-	ubi_prepare_u_boot_env $fit_ubidev
 }
 
 ubi_do_upgrade() {

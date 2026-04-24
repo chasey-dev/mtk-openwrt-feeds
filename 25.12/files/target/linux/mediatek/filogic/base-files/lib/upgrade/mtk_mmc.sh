@@ -1,5 +1,5 @@
 # Script for dual image A/B system boots
-# Copyright (C) 2024 MediaTek Inc.
+# Copyright (C) 2026 MediaTek Inc.
 # Author: Weijie Gao <weijie.gao@mediatek.com>
 
 block_dev_path() {
@@ -37,11 +37,7 @@ mmc_dual_boot_upgrade_itb() {
 	local upgrade_image_slot=$(cat /sys/firmware/devicetree/base/mediatek,upgrade-image-slot 2>/dev/null)
 	[ -n "${upgrade_image_slot}" ] && {
 		v "Set new boot image slot to ${upgrade_image_slot}"
-		# Force the creation of fw_printenv.lock
-		mkdir -p /var/lock
-		touch /var/lock/fw_printenv.lock
-		fw_setenv "dual_boot.current_slot" "${upgrade_image_slot}"
-		fw_setenv "dual_boot.slot_${upgrade_image_slot}_invalid" "0"
+		bspconf upd image ${upgrade_image_slot} "${fit_file}"
 	}
 
 	local rootfs_data_dev=$(cat /sys/firmware/devicetree/base/mediatek,rootfs_data-part 2>/dev/null)

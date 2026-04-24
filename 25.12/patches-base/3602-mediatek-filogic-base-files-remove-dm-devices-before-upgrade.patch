@@ -8,9 +8,9 @@
  asus_initial_setup()
  {
 @@ -68,6 +68,7 @@ platform_do_upgrade() {
- 	case "$board" in
- 	mediatek,mt7981-rfb|\
- 	mediatek,mt7988a-rfb)
+	mediatek,mt7988a-rfb-gsw|\
+	mediatek,mt7988d-rfb|\
+	mediatek,mt7988d-rfb-gsw)
 +		[ -e /dev/dm-0 ] && dmsetup remove_all
  		[ -e /dev/fit0 ] && fitblk /dev/fit0
  		[ -e /dev/fitrw ] && fitblk /dev/fitrw
