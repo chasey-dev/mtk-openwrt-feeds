@@ -1,15 +1,16 @@
 ---
-[v1] net: ethernet: mtk_eth_soc: revise XGMAC force mode
+[v2] net: ethernet: mtk_eth_soc: revise XGMAC force mode
 
 Without this patch, the ETH driver cannot successfully force the XGAMC
 link down or up.
 ---
+v2: Merge check condition in mtk_mac_prepare.
 v1: Refactor XGMAC link down/up flow.
 ---
 
 From 740d56718e6cd9482e48eaa10ba0295ef4c1f841 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
-Date: Thu, 18 Sep 2025 17:00:04 +0800
+Date: Fri, 24 Apr 2026 17:04:13 +0800
 Subject: [PATCH] net: ethernet: mtk_eth_soc: revise xgmac force mode
 
 ---
@@ -31,10 +32,10 @@ index 24e4028..552970d 100644
 +	struct mtk_mac *mac = container_of(config, struct mtk_mac,
 +					   phylink_config);
 +
-+	if (mtk_is_netsys_v3_or_greater(mac->hw) && mtk_interface_mode_is_xgmii(iface)) {
-+		if (mac->id != MTK_GMAC1_ID)
-+			mtk_m32(mac->hw, XMAC_MCR_TRX_DISABLE,
-+				XMAC_MCR_TRX_DISABLE, MTK_XMAC_MCR(mac->id));
++	if (mtk_is_netsys_v3_or_greater(mac->hw) && mtk_interface_mode_is_xgmii(iface) &&
++	    mac->id != MTK_GMAC1_ID) {
++		mtk_m32(mac->hw, XMAC_MCR_TRX_DISABLE,
++			XMAC_MCR_TRX_DISABLE, MTK_XMAC_MCR(mac->id));
 +
 +		mtk_m32(mac->hw, MTK_XGMAC_FORCE_MODE(mac->id) | MTK_XGMAC_FORCE_LINK(mac->id),
 +			MTK_XGMAC_FORCE_MODE(mac->id), MTK_XGMAC_STS(mac->id));

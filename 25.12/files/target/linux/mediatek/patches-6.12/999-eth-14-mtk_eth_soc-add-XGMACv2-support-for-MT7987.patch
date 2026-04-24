@@ -28,10 +28,10 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  					   phylink_config);
 +	struct mtk_eth *eth = mac->hw;
  
- 	if (mtk_is_netsys_v3_or_greater(mac->hw) && mtk_interface_mode_is_xgmii(iface)) {
- 		if (mac->id != MTK_GMAC1_ID)
- 			mtk_m32(mac->hw, XMAC_MCR_TRX_DISABLE,
- 				XMAC_MCR_TRX_DISABLE, MTK_XMAC_MCR(mac->id));
+ 	if (mtk_is_netsys_v3_or_greater(mac->hw) && mtk_interface_mode_is_xgmii(iface) &&
+ 	    mac->id != MTK_GMAC1_ID) {
+		mtk_m32(mac->hw, XMAC_MCR_TRX_DISABLE,
+ 			XMAC_MCR_TRX_DISABLE, MTK_XMAC_MCR(mac->id));
  
 -		mtk_m32(mac->hw, MTK_XGMAC_FORCE_MODE(mac->id) | MTK_XGMAC_FORCE_LINK(mac->id),
 -			MTK_XGMAC_FORCE_MODE(mac->id), MTK_XGMAC_STS(mac->id));
