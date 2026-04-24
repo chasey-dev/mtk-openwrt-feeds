@@ -14,7 +14,7 @@
 +  DEVICE_DTS_OVERLAY:= \
 +	mt7986-spim-nand-nmbm
    DEVICE_DTS_DIR := $(DTS_DIR)/
--  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware
+-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware blkid bspconf
 -  SUPPORTED_DEVICES := mediatek,mt7986a-rfb-snand
 -  UBINIZE_OPTS := -E 5
 -  BLOCKSIZE := 128k
@@ -22,7 +22,7 @@
 -  IMAGE_SIZE := 65536k
 +  DEVICE_DTC_FLAGS := --pad 4096
 +  DEVICE_DTS_LOADADDR := 0x43f00000
-+  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware blkid
++  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware blkid bspconf
 +  KERNEL_LOADADDR := 0x46000000
 +  KERNEL := kernel-bin | gzip
 +  KERNEL_INITRAMFS := kernel-bin | lzma | secure-boot-initramfs | \
@@ -54,7 +54,7 @@
    DEVICE_DTS_DIR := $(DTS_DIR)/
 +  DEVICE_DTC_FLAGS := --pad 4096
 +  DEVICE_DTS_LOADADDR := 0x43f00000
-   DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware blkid
+   DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware blkid bspconf
 -  SUPPORTED_DEVICES := mediatek,mt7986b-rfb
 -  UBINIZE_OPTS := -E 5
 -  BLOCKSIZE := 128k

@@ -23,7 +23,7 @@
    DEVICE_PACKAGES := kmod-eeprom-at24 kmod-gpio-pca953x kmod-i2c-mux-pca954x \
 -		     kmod-rtc-pcf8563 kmod-sfp kmod-usb3 e2fsprogs mkf2fs mt7987-2p5g-phy-firmware
 +		     kmod-rtc-pcf8563 kmod-sfp kmod-usb3 e2fsprogs mkf2fs \
-+		     mt798x-2p5g-phy-firmware-internal blkid kmod-hwmon-pwmfan
++		     mt798x-2p5g-phy-firmware-internal blkid bspconf kmod-hwmon-pwmfan
    BLOCKSIZE := 128k
    PAGESIZE := 2048
    KERNEL_IN_UBI := 1

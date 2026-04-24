@@ -14,8 +14,8 @@ Change-Id: I304ef4655701eb78381a5ced4baaacd03df4e3c1
    DEVICE_DTS_DIR := $(DTS_DIR)/
    DEVICE_DTC_FLAGS := --pad 4096
    DEVICE_DTS_LOADADDR := 0x43f00000
--  DEVICE_PACKAGES := mt7986-wo-firmware blkid
-+  DEVICE_PACKAGES := mt7986-wo-firmware blkid mkf2fs
+-  DEVICE_PACKAGES := mt7986-wo-firmware blkid bspconf
++  DEVICE_PACKAGES := mt7986-wo-firmware blkid bspconf mkf2fs
    KERNEL_LOADADDR := 0x46000000
    KERNEL := kernel-bin | gzip
    KERNEL_INITRAMFS := kernel-bin | lzma | secure-boot-initramfs | \
@@ -23,8 +23,8 @@ Change-Id: I304ef4655701eb78381a5ced4baaacd03df4e3c1
    DEVICE_DTS_DIR := $(DTS_DIR)/
    DEVICE_DTC_FLAGS := --pad 4096
    DEVICE_DTS_LOADADDR := 0x43f00000
--  DEVICE_PACKAGES := mt7986-wo-firmware blkid
-+  DEVICE_PACKAGES := mt7986-wo-firmware blkid mkf2fs
+-  DEVICE_PACKAGES := mt7986-wo-firmware blkid bspconf
++  DEVICE_PACKAGES := mt7986-wo-firmware blkid bspconf mkf2fs
    KERNEL_LOADADDR := 0x46000000
    KERNEL := kernel-bin | gzip
    KERNEL_INITRAMFS := kernel-bin | lzma | secure-boot-initramfs | \
@@ -32,8 +32,8 @@ Change-Id: I304ef4655701eb78381a5ced4baaacd03df4e3c1
    DEVICE_DTS_DIR := $(DTS_DIR)/
    DEVICE_DTC_FLAGS := --pad 4096
    DEVICE_DTS_LOADADDR := 0x4ff00000
--  DEVICE_PACKAGES := mt798x-2p5g-phy-firmware-internal kmod-sfp
-+  DEVICE_PACKAGES := mt798x-2p5g-phy-firmware-internal kmod-sfp mkf2fs
+-  DEVICE_PACKAGES := mt798x-2p5g-phy-firmware-internal kmod-sfp blkid bspconf
++  DEVICE_PACKAGES := mt798x-2p5g-phy-firmware-internal kmod-sfp blkid bspconf mkf2fs
    KERNEL_LOADADDR := 0x40000000
    KERNEL := kernel-bin | gzip
    KERNEL_INITRAMFS := kernel-bin | lzma | secure-boot-initramfs | \
@@ -41,8 +41,8 @@ Change-Id: I304ef4655701eb78381a5ced4baaacd03df4e3c1
    DEVICE_DTS_DIR := $(DTS_DIR)/
    DEVICE_DTC_FLAGS := --pad 4096
    DEVICE_DTS_LOADADDR := 0x45f00000
--  DEVICE_PACKAGES := mt798x-2p5g-phy-firmware-internal kmod-sfp kmod-phy-aquantia blkid
-+  DEVICE_PACKAGES := mt798x-2p5g-phy-firmware-internal kmod-sfp kmod-phy-aquantia blkid mkf2fs
+-  DEVICE_PACKAGES := mt798x-2p5g-phy-firmware-internal kmod-sfp kmod-phy-aquantia blkid bspconf
++  DEVICE_PACKAGES := mt798x-2p5g-phy-firmware-internal kmod-sfp kmod-phy-aquantia blkid bspconf mkf2fs
    KERNEL_LOADADDR := 0x46000000
    KERNEL := kernel-bin | gzip
    KERNEL_INITRAMFS := kernel-bin | lzma | secure-boot-initramfs | \

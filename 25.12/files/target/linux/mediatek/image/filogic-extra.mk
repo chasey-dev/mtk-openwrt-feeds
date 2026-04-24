@@ -24,7 +24,7 @@ define Device/mediatek_mt7988d-rfb
   DEVICE_DTS_DIR := $(DTS_DIR)/
   DEVICE_DTC_FLAGS := --pad 4096
   DEVICE_DTS_LOADADDR := 0x45f00000
-  DEVICE_PACKAGES := mt798x-2p5g-phy-firmware-internal kmod-mt798x-2p5g-phy kmod-sfp blkid mkf2fs
+  DEVICE_PACKAGES := mt798x-2p5g-phy-firmware-internal kmod-mt798x-2p5g-phy kmod-sfp blkid bspconf mkf2fs
   KERNEL_LOADADDR := 0x46000000
   KERNEL := kernel-bin | gzip
   KERNEL_INITRAMFS := kernel-bin | lzma | secure-boot-initramfs | \
@@ -77,7 +77,7 @@ define Device/bananapi_bpi-r4-mini
   DEVICE_DTS_LOADADDR := 0x4ff00000
   DEVICE_PACKAGES := kmod-eeprom-at24 kmod-gpio-pca953x kmod-i2c-mux-pca954x \
 		     kmod-rtc-pcf8563 kmod-sfp kmod-usb3 e2fsprogs mkf2fs \
-		     mt798x-2p5g-phy-firmware-internal blkid kmod-hwmon-pwmfan
+		     mt798x-2p5g-phy-firmware-internal blkid bspconf kmod-hwmon-pwmfan
   BLOCKSIZE := 128k
   PAGESIZE := 2048
   KERNEL_IN_UBI := 1
