@@ -1,17 +1,18 @@
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -5,6 +5,10 @@ ADD_DEFINITIONS(-Os -ggdb -Wall -Werror
+@@ -5,6 +5,11 @@ ADD_DEFINITIONS(-Os -ggdb -Wall -Werror
  
  SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
  
-+ADD_LIBRARY(fstools-bootparam SHARED
-+		boot_param.c)
++ADD_LIBRARY(fstools-bootparam SHARED boot_param.c)
++TARGET_LINK_LIBRARIES(fstools-bootparam PRIVATE blkid)
 +INSTALL(TARGETS fstools-bootparam LIBRARY DESTINATION lib)
++INSTALL(FILES boot_param.h DESTINATION include)
 +
  ADD_LIBRARY(fstools SHARED
  		libfstools/common.c
  		libfstools/snapshot.c
-@@ -18,7 +22,7 @@ ADD_LIBRARY(fstools SHARED
+@@ -18,7 +23,7 @@ ADD_LIBRARY(fstools SHARED
  		libfstools/rootdisk.c
  		libfstools/partname.c
  		libfstools/find.c)
@@ -20,7 +21,7 @@
  INSTALL(TARGETS fstools LIBRARY DESTINATION lib)
  
  ADD_LIBRARY(blkid-tiny SHARED
-@@ -80,9 +84,9 @@ INSTALL(TARGETS blockd RUNTIME DESTINATI
+@@ -80,9 +85,9 @@ INSTALL(TARGETS blockd RUNTIME DESTINATI
  ADD_EXECUTABLE(block block.c probe.c probe-libblkid.c)
  IF(DEFINED CMAKE_UBIFS_EXTROOT)
  	ADD_DEFINITIONS(-DUBIFS_EXTROOT)
@@ -113,7 +114,7 @@
  
  	err = find_ubi_vol(libubi, name, &dev_num, &vol_id);
  	if (!err)
-@@ -1936,6 +1974,26 @@ static int main_swapoff(int argc, char *
+@@ -1936,6 +1974,60 @@ static int main_swapoff(int argc, char *
  	return 0;
  }
  
@@ -137,55 +138,77 @@
 +	}
 +}
 +
++#ifdef UBIFS_EXTROOT
++static void hide_boot_param_ubi_dev(const char *name)
++{
++	char volname[BOOT_PARAM_STR_MAX_LEN], ubi[64], *ubidev;
++	int dev_num, vol_id, ret;
++	libubi_t libubi;
++
++	ret = read_boot_param_string(name, volname, sizeof(volname));
++	if (ret <= 0)
++		return;
++
++	libubi = libubi_open();
++	if (!libubi) {
++		ULOG_ERR("cannot open libubi");
++		return;
++	}
++
++	ret = find_ubi_vol(libubi, volname, &dev_num, &vol_id);
++	if (!ret) {
++		snprintf(ubi, sizeof(ubi), "/dev/ubi%d_%d", dev_num, vol_id);
++
++		ubidev = strdup(ubi);
++		if (ubidev) {
++			if (!add_hide_block_dev(ubidev))
++				free(ubidev);
++		} else {
++			ULOG_ERR("No memory for ubi dev path\n");
++		}
++	}
++
++	libubi_close(libubi);
++}
++#endif
++
  int main(int argc, char **argv)
  {
  	char *base = basename(*argv);
-@@ -1945,6 +2003,8 @@ int main(int argc, char **argv)
+@@ -1945,6 +2037,12 @@ int main(int argc, char **argv)
  	ulog_open(-1, -1, "block");
  	ulog_threshold(LOG_NOTICE);
  
 +	hide_boot_param_dev("rootfs_data-part");
++
++#ifdef UBIFS_EXTROOT
++	hide_boot_param_ubi_dev("upgrade-rootfs_data-part");
++#endif
 +
  	if (!strcmp(base, "swapon"))
  		return main_swapon(argc, argv);
  
 --- a/boot_param.c
 +++ b/boot_param.c
-@@ -0,0 +1,244 @@
-+/* SPDX-License-Identifier: BSD-3-Clause */
+@@ -0,0 +1,181 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (C) 2024 MediaTek Inc. All rights reserved.
++ * Copyright (C) 2026 MediaTek Inc. All Rights Reserved.
 + *
 + * Author: Weijie Gao <weijie.gao@mediatek.com>
++ *
++ * MediaTek kernel boot parameter helper
 + */
 +
-+#include <sys/types.h>
-+#include <sys/stat.h>
 +#include <stdio.h>
++#include <stdbool.h>
 +#include <string.h>
-+#include <dirent.h>
-+#include <fcntl.h>
-+#include <unistd.h>
 +#include <glob.h>
-+#include <dlfcn.h>
-+
++#include <sys/stat.h>
 +#include <blkid/blkid.h>
-+#include <libubox/ulog.h>
 +#include "boot_param.h"
 +
 +#define ARRAY_SIZE(a)	(sizeof(a) / sizeof(a[0]))
-+
-+#define BOOT_PARAM_STR_MAX_LEN			256
-+
-+static struct {
-+	bool loaded;
-+	blkid_probe (*new_probe_from_filename)(const char *);
-+	int (*do_safeprobe)(blkid_probe);
-+	int (*probe_lookup_value)(blkid_probe, const char *, const char **, size_t *);
-+	void (*free_probe)(blkid_probe);
-+	int (*probe_enable_partitions)(blkid_probe, int);
-+	int (*probe_set_partitions_flags)(blkid_probe, int);
-+} libblkid = {};
 +
 +bool read_boot_param_bool(const char *name)
 +{
@@ -219,63 +242,19 @@
 +		return -1;
 +	}
 +
-+	len = fread(val, 1, maxsize, f);
++	len = fread(val, 1, maxsize - 1, f);
 +	fclose(f);
++
++	val[len] = 0;
 +
 +	while (len > 0) {
 +		if (val[len - 1] != '\n' && val[len - 1] != '\r')
 +			break;
 +
-+		len--;
++		val[--len] = 0;
 +	}
 +
-+	if (len < maxsize)
-+		val[len] = 0;
-+
 +	return len;
-+}
-+
-+static bool load_libblkid(void)
-+{
-+	void *lib;
-+
-+	if (libblkid.loaded)
-+		return true;
-+
-+	lib = dlopen("libblkid.so", RTLD_GLOBAL);
-+
-+	if (!lib)
-+		lib = dlopen("libblkid.so.1", RTLD_GLOBAL);
-+
-+	if (!lib)
-+		return false;
-+
-+	libblkid.new_probe_from_filename = dlsym(lib, "blkid_new_probe_from_filename");
-+	if (!libblkid.new_probe_from_filename)
-+		return false;
-+
-+	libblkid.do_safeprobe = dlsym(lib, "blkid_do_safeprobe");
-+	if (!libblkid.do_safeprobe)
-+		return false;
-+
-+	libblkid.probe_lookup_value = dlsym(lib, "blkid_probe_lookup_value");
-+	if (!libblkid.probe_lookup_value)
-+		return false;
-+
-+	libblkid.free_probe = dlsym(lib, "blkid_free_probe");
-+	if (!libblkid.free_probe)
-+		return false;
-+
-+	libblkid.probe_enable_partitions = dlsym(lib, "blkid_probe_enable_partitions");
-+	if (!libblkid.probe_enable_partitions)
-+		return false;
-+
-+	libblkid.probe_set_partitions_flags = dlsym(lib, "blkid_probe_set_partitions_flags");
-+	if (!libblkid.probe_set_partitions_flags)
-+		return false;
-+
-+	libblkid.loaded = true;
-+	return true;
 +}
 +
 +static char *lookup_block_dev(const char *path, const char *key, bool is_uuid)
@@ -293,23 +272,23 @@
 +	type = is_uuid ? "PART_ENTRY_UUID" : "PART_ENTRY_NAME";
 +
 +	for (i = 0; i < gl.gl_pathc; i++) {
-+		blkid_probe pr = libblkid.new_probe_from_filename(gl.gl_pathv[i]);
++		blkid_probe pr = blkid_new_probe_from_filename(gl.gl_pathv[i]);
 +		if (!pr)
 +			continue;
 +
-+		libblkid.probe_enable_partitions(pr, 1);
-+		libblkid.probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
++		blkid_probe_enable_partitions(pr, 1);
++		blkid_probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
 +
-+		if (libblkid.do_safeprobe(pr))
++		if (blkid_do_safeprobe(pr))
 +			goto free_pr;
 +
-+		if (!libblkid.probe_lookup_value(pr, type, &value, &len)) {
++		if (!blkid_probe_lookup_value(pr, type, &value, &len)) {
 +			if (!strcmp(value, key))
 +				result = strdup(gl.gl_pathv[i]);
 +		}
 +
 +	free_pr:
-+		libblkid.free_probe(pr);
++		blkid_free_probe(pr);
 +
 +		if (result)
 +			break;
@@ -337,9 +316,6 @@
 +		"/dev/dm-*",
 +		"/dev/fit*",
 +	};
-+
-+	if (!load_libblkid())
-+		return NULL;
 +
 +	for (i = 0; i < ARRAY_SIZE(block_pats); i++) {
 +		devpath = lookup_block_dev(block_pats[i], key, is_uuid);
@@ -398,12 +374,14 @@
 +}
 --- a/boot_param.h
 +++ b/boot_param.h
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: BSD-3-Clause
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: BSD-3-Clause */
 +/*
-+ * Copyright (C) 2024 MediaTek Inc. All rights reserved.
++ * Copyright (C) 2026 MediaTek Inc. All Rights Reserved.
 + *
 + * Author: Weijie Gao <weijie.gao@mediatek.com>
++ *
++ * MediaTek kernel boot parameter helper
 + */
 +
 +#ifndef _BOOT_PARAM_H_
@@ -411,6 +389,8 @@
 +
 +#include <stddef.h>
 +#include <stdbool.h>
++
++#define BOOT_PARAM_STR_MAX_LEN			256
 +
 +bool read_boot_param_bool(const char *name);
 +int read_boot_param_string(const char *name, char *val, size_t maxsize);
@@ -429,7 +409,7 @@
  
  #include <linux/loop.h>
  
-@@ -28,6 +29,7 @@ struct rootdev_volume {
+@@ -37,6 +38,7 @@ struct rootdev_volume {
  	struct volume v;
  	uint64_t offset;
  	char loop_name[32];
@@ -437,7 +417,7 @@
  };
  
  static const char *rootdev;
-@@ -93,6 +95,28 @@ static int get_squashfs(struct squashfs_
+@@ -157,6 +159,28 @@ static int check_erofs(uint64_t *offset)
  	return 0;
  }
  
@@ -465,8 +445,8 @@
 +
  static struct volume *rootdisk_volume_find(char *name)
  {
- 	struct squashfs_super_block sb;
-@@ -101,6 +125,9 @@ static struct volume *rootdisk_volume_fi
+ 	struct rootdev_volume *p;
+@@ -166,6 +190,9 @@ static struct volume *rootdisk_volume_fi
  	if (strcmp(name, "rootfs_data") != 0)
  		return NULL;
  
@@ -476,7 +456,7 @@
  	if (!rootdev)
  		rootdev = get_rootdev("/");
  	if (!rootdev)
-@@ -128,9 +155,14 @@ static struct volume *rootdisk_volume_fi
+@@ -198,9 +225,14 @@ static struct volume *rootdisk_volume_fi
  static int rootdisk_volume_identify(struct volume *v)
  {
  	struct rootdev_volume *p = container_of(v, struct rootdev_volume, v);
@@ -492,7 +472,7 @@
  	if (!f)
  		return ret;
  
-@@ -213,6 +245,15 @@ static int rootdisk_create_loop(struct r
+@@ -283,6 +315,15 @@ static int rootdisk_create_loop(struct r
  static int rootdisk_volume_init(struct volume *v)
  {
  	struct rootdev_volume *p = container_of(v, struct rootdev_volume, v);
@@ -508,7 +488,7 @@
  
  	if (!p->loop_name[0] && rootdisk_create_loop(p) != 0) {
  		ULOG_ERR("unable to create loop device\n");
-@@ -222,7 +263,8 @@ static int rootdisk_volume_init(struct v
+@@ -292,7 +333,8 @@ static int rootdisk_volume_init(struct v
  	v->type = BLOCKDEV;
  	v->blk = p->loop_name;
  
