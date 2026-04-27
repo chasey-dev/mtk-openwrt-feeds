@@ -314,6 +314,11 @@ int mtk_xfrm_offload_state_add(struct xfrm_state *xs)
 
 	xs->xso.offload_handle = (unsigned long)xfrm_params;
 
+#if KERNEL_VERSION(6, 3, 0) < LINUX_VERSION_CODE
+	memcpy(extack->cookie, &xfrm_params->cdrt->idx, sizeof(xfrm_params->cdrt->idx));
+	extack->cookie_len = sizeof(xfrm_params->cdrt->idx);
+#endif
+
 	spin_lock_bh(&xfrm_params_list.lock);
 
 	list_add_tail(&xfrm_params->node, &xfrm_params_list.list);
