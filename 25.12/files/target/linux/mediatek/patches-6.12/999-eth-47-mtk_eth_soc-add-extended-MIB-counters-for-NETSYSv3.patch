@@ -1,10 +1,11 @@
 ---
-[v1] net: ethernet: mtk_eth_soc: add extended MIB counters for NETSYSv3
+[v2] net: ethernet: mtk_eth_soc: add extended MIB counters for NETSYSv3
 
 Without this patch, the users are unable to obtain ethtool statistic
 data for the Unicast, Multicast, and Broadcast counters from both the
 GMAC and XGMAC.
 ---
+v2: Fix out-of-bounds access issue on MT7988's eth0.
 v1: Add extended MIB counters for NETSYSv3.
 ---
 
@@ -20,9 +21,9 @@ and XGMAC.
 
 Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 ---
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 265 ++++++++++++++------
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 267 ++++++++++++++------
  drivers/net/ethernet/mediatek/mtk_eth_soc.h |  16 ++
- 2 files changed, 201 insertions(+), 80 deletions(-)
+ 2 files changed, 202 insertions(+), 81 deletions(-)
 
 diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
 index 4c66ba3..813a7e1 100644
@@ -65,15 +66,19 @@ index 4c66ba3..813a7e1 100644
  static int mtk_mdio_busy_wait(struct mtk_eth *eth)
  {
  	unsigned long t_start = jiffies;
-@@ -835,6 +858,8 @@ static int mtk_mac_prepare(struct phylink_config *config, unsigned int mode,
- 		else
- 			mtk_m32(mac->hw, MTK_XGMAC_FORCE_MODE(mac->id) | MTK_XGMAC_FORCE_LINK(mac->id),
- 				MTK_XGMAC_FORCE_MODE(mac->id), MTK_XGMAC_STS(mac->id));
-+
-+		mtk_w32(mac->hw, 0x4, MTK_XMAC_CNT_CTRL(mac->id));
- 	}
+@@ -823,9 +846,11 @@ static int mtk_mac_prepare(struct phylink_config *config, unsigned int mode,
+ 	struct mtk_eth *eth = mac->hw;
  
- 	return 0;
+ 	if (mtk_is_netsys_v3_or_greater(mac->hw) && mtk_interface_mode_is_xgmii(iface)) {
+-		if (mac->id != MTK_GMAC1_ID)
++		if (mac->id != MTK_GMAC1_ID) {
++			mtk_w32(mac->hw, 0x4, MTK_XMAC_CNT_CTRL(mac->id));
+ 			mtk_m32(mac->hw, XMAC_MCR_TRX_DISABLE,
+ 				XMAC_MCR_TRX_DISABLE, MTK_XMAC_MCR(mac->id));
++		}
+ 
+ 		if (MTK_HAS_CAPS(eth->soc->caps, MTK_XGMAC_V2))
+ 			mtk_m32(mac->hw, XMAC_FORCE_RX_FC_MODE | XMAC_FORCE_TX_FC_MODE |
 @@ -1372,6 +1397,146 @@ static int mtk_set_mac_address(struct net_device *dev, void *p)
  	return 0;
  }
