@@ -2148,7 +2148,6 @@ struct mtk_usxgmii_pcs {
 	struct regmap		*regmap;
 	struct regmap		*regmap_pextp;
 	struct mutex		regmap_lock;
-	struct mutex		reset_lock;
 	phy_interface_t		interface;
 	bool			link_poll_enable;
 	unsigned long		link_poll_expire;
@@ -2168,6 +2167,7 @@ struct mtk_usxgmii_pcs {
  */
 struct mtk_usxgmii {
 	struct mtk_usxgmii_pcs	pcs[MTK_MAX_DEVS];
+	struct mutex		toprgu_lock;
 	struct regmap		*pll;
 };
 
