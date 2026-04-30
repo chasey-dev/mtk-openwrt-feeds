@@ -23,7 +23,6 @@ define Package/bspconf
   SUBMENU:=Applications
   DEPENDS:=+libblkid
   TITLE:=Tool for editing bspconf data used for Dual-Image/Dual-FIP
-  DEFAULT:=y if TARGET_mediatek
 endef
 
 define Package/bspconf/description
