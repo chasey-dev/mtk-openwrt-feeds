@@ -414,8 +414,8 @@ void mtk_xfrm_offload_policy_delete(struct xfrm_policy *xp)
 #if IS_ENABLED(CONFIG_NET_MEDIATEK_HNAT)
 		foe_clear_crypto_entry(xfrm_params->cdrt->idx);
 #elif defined(CONFIG_CRYPTO_OFFLOAD_INLINE_FLOWBLOCK)
-		mtk_flow_offload_teardown_by_tnl(mcrypto.eth, xfrm_params->cdrt->idx,
-						 MTK_FOE_CRYPTO_DEL);
+		mtk_flow_offload_teardown_by_tnl(mcrypto.eth, MTK_FOE_CRYPTO_DEL,
+						 xfrm_params->cdrt->idx);
 #endif
 
 	return;
