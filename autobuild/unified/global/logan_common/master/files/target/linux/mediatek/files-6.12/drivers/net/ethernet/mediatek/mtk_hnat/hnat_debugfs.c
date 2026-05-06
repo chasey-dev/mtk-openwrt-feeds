@@ -1248,7 +1248,7 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				swab16(entry->ipv4_hnapt.dmac_lo);
 			PRINT_COUNT(m, acct);
 			seq_printf(m,
-				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|%pI4:%d->%pI4:%d=>%pI4:%d->%pI4:%d|%pM=>%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
+				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%pI4(sp=%d)->DIP=%pI4(dp=%d)=>NSIP=%pI4(sp=%d)->NDIP=%pI4(dp=%d)|smac=%pM->dmac=%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d|dscp=%d\n",
 				   entry, ppe_id, ei(entry, end),
 				   es(entry), pt(entry), &saddr,
 				   entry->ipv4_hnapt.sport, &daddr,
@@ -1259,7 +1259,8 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				   entry->info_blk1,
 				   entry->ipv4_hnapt.info_blk2,
 				   entry->ipv4_hnapt.vlan1,
-				   entry->ipv4_hnapt.vlan2);
+				   entry->ipv4_hnapt.vlan2,
+				   entry->ipv4_hnapt.iblk2.dscp);
 		} else if (IS_IPV4_HNAT(entry)) {
 			__be32 saddr = htonl(entry->ipv4_hnapt.sip);
 			__be32 daddr = htonl(entry->ipv4_hnapt.dip);
@@ -1274,7 +1275,7 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				swab16(entry->ipv4_hnapt.dmac_lo);
 			PRINT_COUNT(m, acct);
 			seq_printf(m,
-				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|%pI4->%pI4=>%pI4->%pI4|%pM=>%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
+				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%pI4->DIP=%pI4=>NSIP=%pI4->NDIP=%pI4|smac=%pM->dmac=%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d|dscp=%d\n",
 				   entry, ppe_id, ei(entry, end),
 				   es(entry), pt(entry), &saddr,
 				   &daddr, &nsaddr, &ndaddr, h_source, h_dest,
@@ -1282,7 +1283,8 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				   entry->info_blk1,
 				   entry->ipv4_hnapt.info_blk2,
 				   entry->ipv4_hnapt.vlan1,
-				   entry->ipv4_hnapt.vlan2);
+				   entry->ipv4_hnapt.vlan2,
+				   entry->ipv4_hnapt.iblk2.dscp);
 		} else if (IS_IPV6_5T_ROUTE(entry)) {
 			u32 ipv6_sip0 = entry->ipv6_3t_route.ipv6_sip0;
 			u32 ipv6_sip1 = entry->ipv6_3t_route.ipv6_sip1;
@@ -1302,7 +1304,7 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				swab16(entry->ipv6_5t_route.dmac_lo);
 			PRINT_COUNT(m, acct);
 			seq_printf(m,
-				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x(sp=%d)->DIP=%08x:%08x:%08x:%08x(dp=%d)|%pM=>%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
+				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x(sp=%d)->DIP=%08x:%08x:%08x:%08x(dp=%d)|smac=%pM->dmac=%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d|dscp=%d\n",
 				   entry, ppe_id, ei(entry, end), es(entry), pt(entry),
 				   ipv6_sip0, ipv6_sip1, ipv6_sip2, ipv6_sip3,
 				   entry->ipv6_5t_route.sport,
@@ -1312,7 +1314,8 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				   entry->info_blk1,
 				   entry->ipv6_5t_route.info_blk2,
 				   entry->ipv6_5t_route.vlan1,
-				   entry->ipv6_5t_route.vlan2);
+				   entry->ipv6_5t_route.vlan2,
+				   entry->ipv6_5t_route.iblk2.dscp);
 		} else if (IS_IPV6_3T_ROUTE(entry)) {
 			u32 ipv6_sip0 = entry->ipv6_3t_route.ipv6_sip0;
 			u32 ipv6_sip1 = entry->ipv6_3t_route.ipv6_sip1;
@@ -1332,7 +1335,7 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				swab16(entry->ipv6_5t_route.dmac_lo);
 			PRINT_COUNT(m, acct);
 			seq_printf(m,
-				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x->DIP=%08x:%08x:%08x:%08x|%pM=>%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
+				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x->DIP=%08x:%08x:%08x:%08x|smac=%pM->dmac=%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d|dscp=%d\n",
 				   entry, ppe_id, ei(entry, end),
 				   es(entry), pt(entry), ipv6_sip0,
 				   ipv6_sip1, ipv6_sip2, ipv6_sip3, ipv6_dip0,
@@ -1341,7 +1344,8 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				   entry->info_blk1,
 				   entry->ipv6_3t_route.info_blk2,
 				   entry->ipv6_3t_route.vlan1,
-				   entry->ipv6_3t_route.vlan2);
+				   entry->ipv6_3t_route.vlan2,
+				   entry->ipv6_5t_route.iblk2.dscp);
 		} else if (IS_IPV6_6RD(entry)) {
 			u32 ipv6_sip0 = entry->ipv6_6rd.ipv6_sip0;
 			u32 ipv6_sip1 = entry->ipv6_6rd.ipv6_sip1;
@@ -1363,7 +1367,7 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				swab16(entry->ipv6_6rd.dmac_lo);
 			PRINT_COUNT(m, acct);
 			seq_printf(m,
-				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x(sp=%d)->DIP=%08x:%08x:%08x:%08x(dp=%d)|TSIP=%pI4->TDIP=%pI4|%pM=>%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
+				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x(sp=%d)->DIP=%08x:%08x:%08x:%08x(dp=%d)|TSIP=%pI4->TDIP=%pI4|smac=%pM->dmac=%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d|dscp=%d\n",
 				   entry, ppe_id, ei(entry, end),
 				   es(entry), pt(entry), ipv6_sip0,
 				   ipv6_sip1, ipv6_sip2, ipv6_sip3,
@@ -1375,7 +1379,8 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				   entry->info_blk1,
 				   entry->ipv6_6rd.info_blk2,
 				   entry->ipv6_6rd.vlan1,
-				   entry->ipv6_6rd.vlan2);
+				   entry->ipv6_6rd.vlan2,
+				   entry->ipv6_5t_route.iblk2.dscp);
 #if defined(CONFIG_MEDIATEK_NETSYS_V3)
 		} else if (IS_IPV6_HNAPT(entry)) {
 			u32 ipv6_sip0 = entry->ipv6_hnapt.ipv6_sip0;
@@ -1401,7 +1406,7 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 
 			if (entry->ipv6_hnapt.eg_ipv6_dir == IPV6_SNAT) {
 				seq_printf(m,
-					   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x(sp=%d)->DIP=%08x:%08x:%08x:%08x(dp=%d)|NEW_SIP=%08x:%08x:%08x:%08x(sp=%d)->NEW_DIP=%08x:%08x:%08x:%08x(dp=%d)|%pM=>%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
+					   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x(sp=%d)->DIP=%08x:%08x:%08x:%08x(dp=%d)=>NSIP=%08x:%08x:%08x:%08x(sp=%d)->NDIP=%08x:%08x:%08x:%08x(dp=%d)|smac=%pM->dmac=%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d|dscp=%d\n",
 					   entry, ppe_id, ei(entry, end),
 					   es(entry), pt(entry),
 					   ipv6_sip0, ipv6_sip1,
@@ -1421,10 +1426,11 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 					   entry->info_blk1,
 					   entry->ipv6_hnapt.info_blk2,
 					   entry->ipv6_hnapt.vlan1,
-					   entry->ipv6_hnapt.vlan2);
+					   entry->ipv6_hnapt.vlan2,
+					   entry->ipv6_hnapt.iblk2.dscp);
 			} else if (entry->ipv6_hnapt.eg_ipv6_dir == IPV6_DNAT) {
 				seq_printf(m,
-					   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x(sp=%d)->DIP=%08x:%08x:%08x:%08x(dp=%d)|NEW_SIP=%08x:%08x:%08x:%08x(sp=%d)->NEW_DIP=%08x:%08x:%08x:%08x(dp=%d)|%pM=>%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
+					   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x(sp=%d)->DIP=%08x:%08x:%08x:%08x(dp=%d)=>NSIP=%08x:%08x:%08x:%08x(sp=%d)->NDIP=%08x:%08x:%08x:%08x(dp=%d)|smac=%pM->dmac=%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d|dscp=%d\n",
 					   entry, ppe_id, ei(entry, end),
 					   es(entry), pt(entry),
 					   ipv6_sip0, ipv6_sip1,
@@ -1444,7 +1450,8 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 					   entry->info_blk1,
 					   entry->ipv6_hnapt.info_blk2,
 					   entry->ipv6_hnapt.vlan1,
-					   entry->ipv6_hnapt.vlan2);
+					   entry->ipv6_hnapt.vlan2,
+					   entry->ipv6_hnapt.iblk2.dscp);
 			}
 		} else if (IS_IPV6_HNAT(entry)) {
 			u32 ipv6_sip0 = entry->ipv6_hnapt.ipv6_sip0;
@@ -1470,7 +1477,7 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 
 			if (entry->ipv6_hnapt.eg_ipv6_dir == IPV6_SNAT) {
 				seq_printf(m,
-					   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x->DIP=%08x:%08x:%08x:%08x|NEW_SIP=%08x:%08x:%08x:%08x->NEW_DIP=%08x:%08x:%08x:%08x|%pM=>%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
+					   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x->DIP=%08x:%08x:%08x:%08x=>NSIP=%08x:%08x:%08x:%08x->NDIP=%08x:%08x:%08x:%08x|smac=%pM->dmac=%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d|dscp=%d\n",
 					   entry, ppe_id, ei(entry, end),
 					   es(entry), pt(entry),
 					   ipv6_sip0, ipv6_sip1,
@@ -1486,10 +1493,11 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 					   entry->info_blk1,
 					   entry->ipv6_hnapt.info_blk2,
 					   entry->ipv6_hnapt.vlan1,
-					   entry->ipv6_hnapt.vlan2);
+					   entry->ipv6_hnapt.vlan2,
+					   entry->ipv6_hnapt.iblk2.dscp);
 			} else if (entry->ipv6_hnapt.eg_ipv6_dir == IPV6_DNAT) {
 				seq_printf(m,
-					   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x->DIP=%08x:%08x:%08x:%08x|NEW_SIP=%08x:%08x:%08x:%08x->NEW_DIP=%08x:%08x:%08x:%08x|%pM=>%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
+					   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%08x:%08x:%08x:%08x->DIP=%08x:%08x:%08x:%08x=>NSIP=%08x:%08x:%08x:%08x->NDIP=%08x:%08x:%08x:%08x|smac=%pM->dmac=%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d|dscp=%d\n",
 					   entry, ppe_id, ei(entry, end),
 					   es(entry), pt(entry),
 					   ipv6_sip0, ipv6_sip1,
@@ -1505,7 +1513,8 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 					   entry->info_blk1,
 					   entry->ipv6_hnapt.info_blk2,
 					   entry->ipv6_hnapt.vlan1,
-					   entry->ipv6_hnapt.vlan2);
+					   entry->ipv6_hnapt.vlan2,
+					   entry->ipv6_hnapt.iblk2.dscp);
 			}
 		} else if (IS_L2_BRIDGE(entry)) {
 			unsigned char new_h_dest[ETH_ALEN];
@@ -1527,7 +1536,7 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 
 			PRINT_COUNT(m, acct);
 			seq_printf(m,
-				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|%pM->%pM=>%pM->%pM|eth=0x%04x|sp_tag=%04x|info1=0x%x|info2=0x%x|vlan1=%d=>%d|vlan2=%d=>%d\n",
+				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|smac=%pM->dmac=%pM=>nsmac=%pM->ndmac=%pM|eth=0x%04x|sp_tag=%04x|info1=0x%x|info2=0x%x|vlan1=%d=>%d|vlan2=%d=>%d\n",
 				   entry, ppe_id, ei(entry, end),
 				   es(entry), pt(entry),
 				   h_source, h_dest, new_h_source, new_h_dest,
@@ -1560,7 +1569,7 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				swab16(entry->ipv4_dslite.dmac_lo);
 			PRINT_COUNT(m, acct);
 			seq_printf(m,
-				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%pI4->DIP=%pI4|TSIP=%08x:%08x:%08x:%08x->TDIP=%08x:%08x:%08x:%08x|%pM=>%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
+				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%pI4->DIP=%pI4|TSIP=%08x:%08x:%08x:%08x->TDIP=%08x:%08x:%08x:%08x|smac=%pM->dmac=%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
 				   entry, ppe_id, ei(entry, end),
 				   es(entry), pt(entry), &saddr,
 				   &daddr, ipv6_tsip0, ipv6_tsip1, ipv6_tsip2,
@@ -1594,7 +1603,7 @@ static int __hnat_debug_show(struct seq_file *m, void *private, u32 ppe_id)
 				swab16(entry->ipv4_mape.dmac_lo);
 			PRINT_COUNT(m, acct);
 			seq_printf(m,
-				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%pI4:%d->DIP=%pI4:%d|NSIP=%pI4:%d->NDIP=%pI4:%d|TSIP=%08x:%08x:%08x:%08x->TDIP=%08x:%08x:%08x:%08x|%pM=>%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
+				   "addr=0x%p|ppe=%d|index=%d|state=%s|type=%s|SIP=%pI4(sp=%d)->DIP=%pI4(dp=%d)=>NSIP=%pI4(sp=%d)->NDIP=%pI4(dp=%d)|TSIP=%08x:%08x:%08x:%08x->TDIP=%08x:%08x:%08x:%08x|smac=%pM->dmac=%pM|sp_tag=0x%04x|info1=0x%x|info2=0x%x|vlan1=%d|vlan2=%d\n",
 				   entry, ppe_id, ei(entry, end),
 				   es(entry), pt(entry),
 				   &saddr, entry->ipv4_mape.sport,
