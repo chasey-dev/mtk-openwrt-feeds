@@ -1,5 +1,5 @@
 diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
-index 19414609ea..289a8ea721 100644
+index 1941460..b04e5cd 100644
 --- a/package/kernel/mt76/Makefile
 +++ b/package/kernel/mt76/Makefile
 @@ -8,9 +8,9 @@ PKG_LICENSE_FILES:=
@@ -68,7 +68,27 @@ index 19414609ea..289a8ea721 100644
  		modules
  	$(MAKE) -C $(PKG_BUILD_DIR)/tools
  endef
-@@ -675,6 +688,7 @@ define KernelPackage/mt7990-firmware/install
+@@ -627,6 +640,7 @@ endef
+ define KernelPackage/mt7981-firmware/install
+ 	$(INSTALL_DIR) $(1)/lib/firmware/mediatek
+ 	cp \
++		$(PKG_BUILD_DIR)/firmware/mt7981_eeprom_mt7976_dbdc.bin \
+ 		$(PKG_BUILD_DIR)/firmware/mt7981_wa.bin \
+ 		$(PKG_BUILD_DIR)/firmware/mt7981_wm.bin \
+ 		$(PKG_BUILD_DIR)/firmware/mt7981_rom_patch.bin \
+@@ -636,6 +650,11 @@ endef
+ define KernelPackage/mt7986-firmware/install
+ 	$(INSTALL_DIR) $(1)/lib/firmware/mediatek
+ 	cp \
++		$(PKG_BUILD_DIR)/firmware/mt7986_eeprom_mt7975.bin \
++		$(PKG_BUILD_DIR)/firmware/mt7986_eeprom_mt7975_dual.bin \
++		$(PKG_BUILD_DIR)/firmware/mt7986_eeprom_mt7976.bin \
++		$(PKG_BUILD_DIR)/firmware/mt7986_eeprom_mt7976_dbdc.bin \
++		$(PKG_BUILD_DIR)/firmware/mt7986_eeprom_mt7976_dual.bin \
+ 		$(PKG_BUILD_DIR)/firmware/mt7986_wa.bin \
+ 		$(PKG_BUILD_DIR)/firmware/mt7986_wm_mt7975.bin \
+ 		$(PKG_BUILD_DIR)/firmware/mt7986_wm.bin \
+@@ -675,6 +694,7 @@ define KernelPackage/mt7990-firmware/install
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7990_eeprom_2i5i.bin \
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7990_rom_patch.bin \
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7990_wm.bin \
@@ -76,7 +96,7 @@ index 19414609ea..289a8ea721 100644
  		$(1)/lib/firmware/mediatek/mt7996
  endef
  
-@@ -688,6 +702,7 @@ define KernelPackage/mt7992-firmware/install
+@@ -688,6 +708,7 @@ define KernelPackage/mt7992-firmware/install
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7992_rom_patch.bin \
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7992_wa.bin \
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7992_wm.bin \
@@ -84,7 +104,7 @@ index 19414609ea..289a8ea721 100644
  		$(1)/lib/firmware/mediatek/mt7996
  endef
  
-@@ -700,6 +715,7 @@ define KernelPackage/mt7992-23-firmware/install
+@@ -700,6 +721,7 @@ define KernelPackage/mt7992-23-firmware/install
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7992_rom_patch_23.bin \
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7992_wa_23.bin \
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7992_wm_23.bin \
@@ -92,7 +112,7 @@ index 19414609ea..289a8ea721 100644
  		$(1)/lib/firmware/mediatek/mt7996
  endef
  
-@@ -718,6 +734,7 @@ define KernelPackage/mt7996-firmware/install
+@@ -718,6 +740,7 @@ define KernelPackage/mt7996-firmware/install
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7996_rom_patch.bin \
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7996_wa.bin \
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7996_wm.bin \
@@ -100,7 +120,7 @@ index 19414609ea..289a8ea721 100644
  		$(1)/lib/firmware/mediatek/mt7996
  endef
  
-@@ -729,6 +746,7 @@ define KernelPackage/mt7996-233-firmware/install
+@@ -729,6 +752,7 @@ define KernelPackage/mt7996-233-firmware/install
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7996_rom_patch_233.bin \
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7996_wa_233.bin \
  		$(PKG_BUILD_DIR)/firmware/mt7996/mt7996_wm_233.bin \
