@@ -25,14 +25,12 @@ NETSYSv3 or greater, and 0 for older generations.
  drivers/net/ethernet/mediatek/mtk_eth_soc.h | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-index a56fed8..b6fb722 100644
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-@@ -1928,12 +1928,12 @@ static inline u32 mtk_get_ib1_ppoe_mask(struct mtk_eth *eth)
+@@ -1911,12 +1911,12 @@ static inline u32 mtk_get_ib1_ppoe_mask(
  	return MTK_FOE_IB1_BIND_PPPOE;
  }
-
+ 
 -static inline u32 mtk_get_ib1_vlan_tag_mask(struct mtk_eth *eth)
 +static inline u32 mtk_get_ib1_sp_tag_mask(struct mtk_eth *eth)
  {
@@ -40,12 +38,9 @@ index a56fed8..b6fb722 100644
 -		return MTK_FOE_IB1_BIND_VLAN_TAG_V2;
 +	if (mtk_is_netsys_v3_or_greater(eth))
 +		return MTK_FOE_IB1_BIND_IS_SP_TAG_V3;
-
+ 
 -	return MTK_FOE_IB1_BIND_VLAN_TAG;
 +	return 0;
  }
-
+ 
  static inline u32 mtk_get_ib1_vlan_layer_mask(struct mtk_eth *eth)
---
-2.45.2
-

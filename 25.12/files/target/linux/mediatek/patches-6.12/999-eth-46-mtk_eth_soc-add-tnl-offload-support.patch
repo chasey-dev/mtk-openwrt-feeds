@@ -13,7 +13,7 @@ v1: Add tunnel decapsulation offload support
 
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -335,6 +335,9 @@ static const char * const mtk_clks_sourc
+@@ -323,6 +323,9 @@ static const char * const mtk_clks_sourc
  	"top_netsys_warp_sel",
  };
  
@@ -23,7 +23,7 @@ v1: Add tunnel decapsulation offload support
  void mtk_w32(struct mtk_eth *eth, u32 val, unsigned reg)
  {
  	__raw_writel(val, eth->base + reg);
-@@ -2671,13 +2674,14 @@ static int mtk_poll_rx(struct napi_struc
+@@ -2633,13 +2636,14 @@ static int mtk_poll_rx(struct napi_struc
  	int done = 0, bytes = 0;
  	dma_addr_t dma_addr = DMA_MAPPING_ERROR;
  	int ppe_idx = 0;
@@ -39,7 +39,7 @@ v1: Add tunnel decapsulation offload support
  		u32 hash, reason;
  		int mac = 0;
  
-@@ -2712,7 +2716,15 @@ static int mtk_poll_rx(struct napi_struc
+@@ -2674,7 +2678,15 @@ static int mtk_poll_rx(struct napi_struc
  			     !eth->netdev[mac]))
  			goto release_desc;
  
@@ -58,7 +58,7 @@ v1: Add tunnel decapsulation offload support
  		if (unlikely(test_bit(MTK_RESETTING, &eth->state)))
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-@@ -468,6 +468,7 @@
+@@ -459,6 +459,7 @@
  #define TPORT_QDMA			1
  #define TPORT_EIP197			2
  #define TPORT_EIP197_QDMA		3
@@ -66,7 +66,7 @@ v1: Add tunnel decapsulation offload support
  #define TX_DMA_TPORT_MASK       GENMASK(3, 0)
  #define TX_DMA_FPORT_SHIFT_V2	8
  #define TX_DMA_FPORT_MASK_V2	0xf
-@@ -2005,6 +2006,9 @@ static inline bool mtk_interface_mode_is
+@@ -1964,6 +1965,9 @@ static inline bool mtk_interface_mode_is
  	}
  }
  
