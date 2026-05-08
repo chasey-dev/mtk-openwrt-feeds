@@ -1,3 +1,13 @@
+---
+[v2] net: ethernet: mtk_wed: add WDMA disable flow for WiFi link down
+
+Add proper WDMA disable flow when WiFi link goes down to prevent
+resource leaks and ensure clean state transitions.
+---
+v2: Improved state machine handling.
+v1: Initial WDMA disable flow.
+---
+
 From 9fef95a165ffdf921eeb5b5e58600cd912746f6b Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Tue, 29 Apr 2025 22:15:57 +0800

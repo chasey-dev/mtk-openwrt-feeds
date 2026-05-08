@@ -1,3 +1,13 @@
+---
+[v2] net: ethernet: mtk_wed: add PPE packet drop support
+
+Add PPE (Packet Processing Engine) packet drop capability to WED
+for flow control and congestion management.
+---
+v2: Refined drop mechanism.
+v1: Initial PPE drop support.
+---
+
 From 933f7bc657c5f7426f01220aca53509bedb321f8 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Fri, 21 Feb 2025 11:48:53 +0800
