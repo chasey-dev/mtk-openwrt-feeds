@@ -1,3 +1,14 @@
+---
+[v1] crypto: inside-secure - Add AEAD 3DES-MD5 cipher support
+
+Add AEAD (Authenticated Encryption with Associated Data) support for
+3DES encryption with MD5 authentication. Implements safexcel-md5 hash
+algorithm and 3DES-CBC-MD5 AEAD cipher for IPsec ESP and other secure
+communication protocols.
+---
+v1: Add AEAD 3DES-MD5 cipher support
+---
+
 --- a/drivers/crypto/inside-secure/safexcel_cipher.c
 +++ b/drivers/crypto/inside-secure/safexcel_cipher.c
 @@ -23,6 +23,7 @@
@@ -9,7 +20,7 @@
  #include <crypto/internal/aead.h>
  #include <crypto/internal/skcipher.h>
 @@ -462,6 +463,9 @@ static int safexcel_aead_setkey(struct c
- 
+
  	/* Auth key */
  	switch (ctx->hash_alg) {
 +	case CONTEXT_CONTROL_CRYPTO_ALG_MD5:
@@ -70,7 +81,7 @@
 +		},
  	},
  };
- 
+
 --- a/drivers/crypto/inside-secure/safexcel.c
 +++ b/drivers/crypto/inside-secure/safexcel.c
 @@ -1269,6 +1269,7 @@ static struct safexcel_alg_template *saf
