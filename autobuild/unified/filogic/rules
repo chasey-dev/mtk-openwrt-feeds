@@ -38,6 +38,9 @@ platform_change_openwrt_config() {
 }
 
 filogic_change_kernel_config() {
+	extra_firmware="airoha/EthMD32.dm.bin airoha/EthMD32.DSP.bin airoha/an8811hb/EthMD32_CRC.DM.bin airoha/an8811hb/EthMD32_CRC.DSP.bin as21x1x_fw.bin "
+	extra_firmware+="Rhe-05.06-Candidate9-AQR_Mediatek_23B_P5_ID45824_LCLVER1.cld AQR-G4_v5.7.0-AQR_EVB_Generic_X3410_StdCfg_MDISwap_USX_ID46316_VER2148.cld "
+
 	# Base configs
 	kernel_config_enable CONFIG_COMMON_CLK_MT7987
 	kernel_config_enable CONFIG_PINCTRL_MT7987
@@ -49,7 +52,7 @@ filogic_change_kernel_config() {
 	kernel_config_enable CONFIG_PCIEASPM_POWER_SUPERSAVE
 
 	# APSoC related configs
-	kernel_config_enable CONFIG_EXTRA_FIRMWARE "\"airoha/EthMD32.dm.bin airoha/EthMD32.DSP.bin as21x1x_fw.bin Rhe-05.06-Candidate9-AQR_Mediatek_23B_P5_ID45824_LCLVER1.cld AQR-G4_v5.7.0-AQR_EVB_Generic_X3410_StdCfg_MDISwap_USX_ID46316_VER2148.cld airoha/an8811hb/EthMD32_CRC.DM.bin airoha/an8811hb/EthMD32_CRC.DSP.bin\""
+	kernel_config_enable CONFIG_EXTRA_FIRMWARE "\"${extra_firmware}\""
 	kernel_config_enable CONFIG_EXTRA_FIRMWARE_DIR "\"drivers/base/firmware_loader/builtin\""
 	kernel_config_enable CONFIG_AIR_EN8811H_PHY
 	kernel_config_enable CONFIG_AIR_EN8811H_PHY_DEBUGFS
