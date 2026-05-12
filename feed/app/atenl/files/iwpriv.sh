@@ -43,6 +43,10 @@ function write_dmesg() {
     echo "$1" > /dev/kmsg
 }
 
+function remove_leading_zeros() {
+    echo "$1" | sed 's/^0*\([0-9]\)/\1/'
+}
+
 function record_config() {
     local config=$1
     local tmp_file=$3
@@ -699,9 +703,9 @@ function convert_ibf {
         "ATEConTxETxBfGdProc")
             local tx_rate_mode=$(convert_tx_mode ${new_param:0:2})
             local tx_rate_idx=${new_param:3:2}
-            local bw=$(echo ${new_param:6:2} | sed 's/^0//')
-            local channel=${new_param:9:3}
-            local channel2=${new_param:13:3}
+            local bw=$(remove_leading_zeros ${new_param:6:2})
+            local channel=$(remove_leading_zeros ${new_param:9:3})
+            local channel2=$(remove_leading_zeros ${new_param:13:3})
             local band=${new_param:17}
 
             new_cmd="ebf_golden_init"
@@ -719,15 +723,15 @@ function convert_ibf {
         "ATEConTxETxBfInitProc")
             local tx_rate_mode=$(convert_tx_mode ${new_param:0:2})
             local tx_rate_idx=${new_param:3:2}
-            local bw=$(echo ${new_param:6:2} | sed 's/^0//')
+            local bw=$(remove_leading_zeros ${new_param:6:2})
             local tx_rate_nss=${new_param:9:2}
             local tx_stream=${new_param:12:2}
             local tx_antenna=$((2 ** tx_stream - 1))
             local tx_power=${new_param:15:2}
-            local channel=$(echo ${new_param:18:3} | sed 's/^0//')
-            local channel2=${new_param:22:3}
+            local channel=$(remove_leading_zeros ${new_param:18:3})
+            local channel2=$(remove_leading_zeros ${new_param:22:3})
             local band=${new_param:26:1}
-            local tx_length=$(echo ${new_param:28:5} | sed 's/^0//')
+            local tx_length=$(remove_leading_zeros ${new_param:28:5})
 
             new_cmd="ebf_init"
             do_ate_work "ATESTART"
