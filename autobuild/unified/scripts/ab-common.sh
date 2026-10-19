@@ -31,7 +31,8 @@ is_pseudo_arg() {
 	debug|\
 	release_dir|\
 	extra_branches|\
-	release_build)
+	release_build|\
+	nobuild_tarball)
 		;;
 	*)
 		return 1
