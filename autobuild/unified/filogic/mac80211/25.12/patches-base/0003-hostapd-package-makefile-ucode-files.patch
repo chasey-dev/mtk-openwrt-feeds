@@ -1,5 +1,5 @@
 diff --git a/package/network/services/hostapd/Config.in b/package/network/services/hostapd/Config.in
-index 742cd78a14..db058fdee4 100644
+index 742cd78..db058fd 100644
 --- a/package/network/services/hostapd/Config.in
 +++ b/package/network/services/hostapd/Config.in
 @@ -44,6 +44,10 @@ config DRIVER_11BE_SUPPORT
@@ -14,23 +14,27 @@ index 742cd78a14..db058fdee4 100644
  	bool "Enable support for unsecure and obsolete WEP"
  	depends on PACKAGE_hostapd-common
 diff --git a/package/network/services/hostapd/Makefile b/package/network/services/hostapd/Makefile
-index d46be1c6cb..aaac54bb85 100644
+index 8152497..e440573 100644
 --- a/package/network/services/hostapd/Makefile
 +++ b/package/network/services/hostapd/Makefile
-@@ -9,9 +9,9 @@ PKG_RELEASE:=1
+@@ -7,11 +7,12 @@ include $(TOPDIR)/rules.mk
+ PKG_NAME:=hostapd
+ PKG_RELEASE:=6
  
- PKG_SOURCE_URL:=https://w1.fi/hostap.git
+-PKG_SOURCE_URL:=https://w1.fi/hostap.git
++PKG_SOURCE_URL:=https://github.com/mediatek/softmac_hostapd
  PKG_SOURCE_PROTO:=git
 -PKG_SOURCE_DATE:=2025-08-26
 -PKG_SOURCE_VERSION:=ca266cc24d8705eb1a2a0857ad326e48b1408b20
 -PKG_MIRROR_HASH:=59ac677093f524ff98588abd9f33805a336a6e929d6814222f0d784c854f2343
-+PKG_SOURCE_DATE:=2026-02-19
-+PKG_SOURCE_VERSION:=53d12cd44da765ee446b2834aad92e9670319f8c
-+PKG_MIRROR_HASH:=dc99b4211e9ed3037fad88c4052d90da11b404aa8e2110e1a85059a23a81833d
++PKG_SOURCE_VERSION:=mp4.3-6.12
++PKG_MIRROR_HASH:=skip
++
++PKG_VERSION:=4.3.6.12
  
  PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
  PKG_LICENSE:=BSD-3-Clause
-@@ -28,6 +28,7 @@ PKG_CONFIG_DEPENDS:= \
+@@ -28,6 +29,7 @@ PKG_CONFIG_DEPENDS:= \
  	CONFIG_DRIVER_11AC_SUPPORT \
  	CONFIG_DRIVER_11AX_SUPPORT \
  	CONFIG_DRIVER_11BE_SUPPORT \
@@ -38,7 +42,7 @@ index d46be1c6cb..aaac54bb85 100644
  	CONFIG_WPA_ENABLE_WEP
  
  PKG_BUILD_FLAGS:=gc-sections lto
-@@ -46,8 +47,9 @@ LOCAL_TYPE=$(strip \
+@@ -46,8 +48,9 @@ LOCAL_TYPE=$(strip \
  LOCAL_AND_LIB_VARIANT=$(patsubst hostapd-%,%,\
  		      $(patsubst wpad-%,%,\
  		      $(patsubst supplicant-%,%,\
@@ -49,7 +53,7 @@ index d46be1c6cb..aaac54bb85 100644
  
  LOCAL_VARIANT=$(patsubst %-internal,%,\
  	      $(patsubst %-openssl,%,\
-@@ -86,22 +88,29 @@ ifneq ($(LOCAL_VARIANT),mini)
+@@ -86,22 +89,29 @@ ifneq ($(LOCAL_VARIANT),mini)
    ifneq ($(CONFIG_DRIVER_11BE_SUPPORT),)
      HOSTAPD_IEEE80211BE:=y
    endif
@@ -83,7 +87,7 @@ index d46be1c6cb..aaac54bb85 100644
  	$(if $(HOSTAPD_IEEE80211BE),CONFIG_OCV=y)
  
  
-@@ -574,12 +583,32 @@ define Package/eapol-test-mbedtls
+@@ -574,12 +584,32 @@ define Package/eapol-test-mbedtls
    PROVIDES:=eapol-test
  endef
  
@@ -116,7 +120,7 @@ index d46be1c6cb..aaac54bb85 100644
  	rm -f $(PKG_BUILD_DIR)/.config_*
  	touch $(subst .configured_,.config_,$(STAMP_CONFIGURED))
    endef
-@@ -603,14 +632,14 @@ TARGET_CPPFLAGS := \
+@@ -603,14 +633,14 @@ TARGET_CPPFLAGS := \
  	-D_GNU_SOURCE \
  	$(if $(CONFIG_WPA_MSG_MIN_PRIORITY),-DCONFIG_MSG_MIN_PRIORITY=$(CONFIG_WPA_MSG_MIN_PRIORITY))
  
@@ -133,7 +137,7 @@ index d46be1c6cb..aaac54bb85 100644
  	$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)/$(1) \
  		$(TARGET_CONFIGURE_OPTS) \
  		$(DRIVER_MAKEOPTS) \
-@@ -639,6 +668,9 @@ define Build/Compile/wpad
+@@ -639,6 +669,9 @@ define Build/Compile/wpad
  		MULTICALL=1 \
  		wpa_cli wpa_supplicant_multi.a \
  	)
@@ -143,7 +147,7 @@ index d46be1c6cb..aaac54bb85 100644
  	+export MAKEFLAGS="$(MAKE_JOBSERVER)"; $(TARGET_CC) -o $(PKG_BUILD_DIR)/wpad \
  		$(TARGET_CFLAGS) \
  		./files/multicall.c \
-@@ -651,6 +683,9 @@ define Build/Compile/hostapd
+@@ -651,6 +684,9 @@ define Build/Compile/hostapd
  	+$(call Build/RunMake,hostapd, \
  		hostapd hostapd_cli \
  	)
@@ -153,7 +157,7 @@ index d46be1c6cb..aaac54bb85 100644
  endef
  
  define Build/Compile/supplicant
-@@ -689,12 +724,13 @@ define Build/Compile
+@@ -689,12 +725,13 @@ define Build/Compile
  endef
  
  define Install/hostapd/full
@@ -168,7 +172,21 @@ index d46be1c6cb..aaac54bb85 100644
  endef
  
  define Package/hostapd-full/conffiles
-@@ -793,6 +829,13 @@ Package/wpa-supplicant-mesh-openssl/install = $(Package/wpa-supplicant/install)
+@@ -718,13 +755,11 @@ endif
+ 
+ define Install/hostapd
+ 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/usr/share/hostap
+-	$(INSTALL_DATA) ./files/hostapd.uc $(1)/usr/share/hostap/
+ 	$(if $(findstring full,$(CONFIG_VARIANT)),$(Install/hostapd/full))
+ endef
+ 
+ define Install/supplicant
+ 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/usr/share/hostap
+-	$(INSTALL_DATA) ./files/wpa_supplicant.uc $(1)/usr/share/hostap/
+ endef
+ 
+ define Package/hostapd-common/install
+@@ -793,6 +828,13 @@ Package/wpa-supplicant-mesh-openssl/install = $(Package/wpa-supplicant/install)
  Package/wpa-supplicant-mesh-wolfssl/install = $(Package/wpa-supplicant/install)
  Package/wpa-supplicant-mesh-mbedtls/install = $(Package/wpa-supplicant/install)
  
@@ -182,7 +200,7 @@ index d46be1c6cb..aaac54bb85 100644
  ifneq ($(LOCAL_TYPE),hostapd)
    define Package/wpa-cli/install
  	$(INSTALL_DIR) $(1)/usr/sbin
-@@ -868,3 +911,4 @@ $(eval $(call BuildPackage,eapol-test))
+@@ -868,3 +910,4 @@ $(eval $(call BuildPackage,eapol-test))
  $(eval $(call BuildPackage,eapol-test-openssl))
  $(eval $(call BuildPackage,eapol-test-wolfssl))
  $(eval $(call BuildPackage,eapol-test-mbedtls))

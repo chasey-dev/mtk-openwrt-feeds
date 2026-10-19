@@ -1,0 +1,45 @@
+diff --git a/package/network/config/wifi-scripts/Makefile b/package/network/config/wifi-scripts/Makefile
+index ae41f74..2cc4021 100644
+--- a/package/network/config/wifi-scripts/Makefile
++++ b/package/network/config/wifi-scripts/Makefile
+@@ -8,10 +8,16 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=wifi-scripts
+-PKG_VERSION:=1.0
+ PKG_RELEASE:=1
+ PKG_LICENSE:=GPL-2.0
+ 
++PKG_SOURCE_URL:=https://github.com/mediatek/softmac_wifi-scripts
++PKG_SOURCE_PROTO:=git
++PKG_SOURCE_VERSION:=mp4.2-6.6
++PKG_SOURCE_HASH:=skip
++
++PKG_VERSION:=$(PKG_SOURCE_VERSION)
++PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+ PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
+ 
+ include $(INCLUDE_DIR)/package.mk
+@@ -28,9 +34,6 @@ define Package/wifi-scripts/description
+  A set of scripts that handle setup and configuration of Wi-Fi devices.
+ endef
+ 
+-define Build/Prepare
+-endef
+-
+ define Build/Configure
+ endef
+ 
+@@ -38,8 +41,10 @@ define Build/Compile
+ endef
+ 
+ define Package/wifi-scripts/install
+-	$(INSTALL_DIR) $(1)
+-	$(CP) ./files/* $(1)/
++	$(INSTALL_DIR) $(1) $(1)/usr/share/hostap
++	$(CP) $(PKG_BUILD_DIR)/files/* $(1)/
++	$(INSTALL_DATA) $(PKG_BUILD_DIR)/hostapd/hostapd.uc $(1)/usr/share/hostap/
++	$(INSTALL_DATA) $(PKG_BUILD_DIR)/hostapd/wpa_supplicant.uc $(1)/usr/share/hostap/
+ endef
+ 
+ $(eval $(call BuildPackage,wifi-scripts))

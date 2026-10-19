@@ -1,8 +1,8 @@
 diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
-index 52f54fc..bd0cc20 100644
+index 52f54fc..0a336ff 100644
 --- a/package/kernel/mac80211/Makefile
 +++ b/package/kernel/mac80211/Makefile
-@@ -10,18 +10,19 @@ include $(INCLUDE_DIR)/kernel.mk
+@@ -10,18 +10,22 @@ include $(INCLUDE_DIR)/kernel.mk
  
  PKG_NAME:=mac80211
  
@@ -12,19 +12,25 @@ index 52f54fc..bd0cc20 100644
  PKG_LICENSE:=GPL-2.0-only
  PKG_LICENSE_FILES:=COPYING
  
- PKG_SOURCE_URL:=https://github.com/openwrt/backports/releases/download/backports-v$(PKG_VERSION)
+-PKG_SOURCE_URL:=https://github.com/openwrt/backports/releases/download/backports-v$(PKG_VERSION)
 -PKG_HASH:=ca3666d1b89a0399747fb9b9fd7b0a4d0a1568548198d800acaf7ca0e8659979
-+PKG_HASH:=623e5cf46ca8e81fd413f4f465e2580a0143e24929f9c22ce1ba7c34f2872989
++PKG_SOURCE_URL:=https://github.com/mediatek/softmac_mac80211
++PKG_SOURCE_PROTO:=git
++PKG_SOURCE_VERSION:=mp4.3-6.12
++PKG_HASH:=skip
  
- PKG_SOURCE:=backports-$(PKG_VERSION).tar.zst
- PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(if $(BUILD_VARIANT),$(PKG_NAME)-$(BUILD_VARIANT)/)backports-$(PKG_VERSION)
+-PKG_SOURCE:=backports-$(PKG_VERSION).tar.zst
+-PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(if $(BUILD_VARIANT),$(PKG_NAME)-$(BUILD_VARIANT)/)backports-$(PKG_VERSION)
++PKG_VERSION:=4.3.6.12
++PKG_SOURCE_SUBDIR:=backports-$(PKG_VERSION)
++PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(if $(BUILD_VARIANT),$(PKG_NAME)-$(BUILD_VARIANT)/)$(PKG_SOURCE_SUBDIR)
  PKG_BUILD_PARALLEL:=1
  
 +SOURCE_PATH:=./src
  PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
  
  PKG_DRIVERS = \
-@@ -80,6 +81,10 @@ config-y:= \
+@@ -80,6 +84,10 @@ config-y:= \
  	WLAN_VENDOR_ST \
  	WLAN_VENDOR_TI \
  	WLAN_VENDOR_ZYDAS \
@@ -35,7 +41,7 @@ index 52f54fc..bd0cc20 100644
  
  config-$(call config_package,cfg80211,$(ALL_VARIANTS)) += CFG80211
  config-$(CONFIG_PACKAGE_CFG80211_TESTMODE) += NL80211_TESTMODE
-@@ -284,7 +289,7 @@ endif
+@@ -284,7 +292,7 @@ endif
  
  MAKE_OPTS:= \
  	$(subst -C $(LINUX_DIR),-C "$(PKG_BUILD_DIR)",$(KERNEL_MAKEOPTS)) \
@@ -44,7 +50,7 @@ index 52f54fc..bd0cc20 100644
  	KLIB_BUILD="$(LINUX_DIR)" \
  	MODPROBE=true \
  	KLIB=$(TARGET_MODULES_DIR) \
-@@ -305,6 +310,7 @@ define Build/Prepare
+@@ -305,6 +313,7 @@ define Build/Prepare
  	rm -rf $(PKG_BUILD_DIR)
  	mkdir -p $(PKG_BUILD_DIR)
  	$(PKG_UNPACK)
